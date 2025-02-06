@@ -1,1 +1,5 @@
-/photon
+# Virtual environment
+/venv
+
+# DB file
+*.swp

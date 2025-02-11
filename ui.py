@@ -2,6 +2,12 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import time
 
+def query(id):
+    if(id.isnumeric()):
+        return "Player1"
+    return ""
+
+
 class Splash(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -18,24 +24,55 @@ class TeamFrame(ctk.CTkFrame):
     def __init__(self, master, title):
         super().__init__(master)
 
-        self.title = title
+        if title == "Red":
+            self.color = "#591717"
+        else:
+            self.color = "#0e450e"
+        
+        self.configure(fg_color = self.color)
 
-        self.title = ctk.CTkLabel(self, text=self.title, fg_color="gray30", corner_radius=6)
-        self.title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew", columnspan=2)
+        self.title = title
+        self.bg_color = title
+        self.master = master
+
+        self.title = ctk.CTkLabel(self, text=self.title, corner_radius=6, font=("default",40))
+        self.title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew", columnspan=3)
 
         self.widgets = []
         for i in range(15):
             row = [None, None]
-            row[0] = ctk.CTkEntry(self,width = 20, placeholder_text="")
-            row[0].grid(row=i+1, column=0, padx=10, pady=(10, 0), sticky="w")
-            row[1] = ctk.CTkTextbox(self, height=10)
-            row[1].grid(row=i+1, column=1, padx=10, pady=(10, 0), sticky="w")
+            num = ctk.CTkLabel(self, width = 20, height=30,text=str(i+1).zfill(2))
+            num.grid(row=i+1, column=0,padx=(5,0), pady=5, sticky="ne")
+            row[0] = ctk.CTkEntry(self,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
+            row[0].grid(row=i+1, column=1,padx=(5,0), pady=5, sticky="nw")
+            row[0].bind("<FocusOut>", self.validate)
+            row[0].bind("<Return>", self.validate)
+            row[1] = ctk.CTkLabel(self, width = 200, height=30, fg_color="White", text_color="Black",text="")
+            row[1].grid(row=i+1, column=2,padx=(0,10), pady=5, sticky="ne")
             self.widgets.append(row)
+
+
+    def validate(self, event):
+        box = event.widget
+        response = self.master.store_query(box.get(),self.bg_color)
+        if(len(response) > 0):
+            for i in range(len(self.widgets)):
+                if(self.widgets[i][0].get() == box.get()):
+                    self.widgets[i][1].configure(text=response)
+        else:
+            box.delete(0, 999)
+        
+
+
+
+
 
 class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.withdraw()
+        self.player_list_g = []
+        self.player_list_r = []
       
     def splash(self):
         self.splash = Splash(self)
@@ -50,10 +87,28 @@ class App(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         self.red = TeamFrame(self, "Red")
-        self.red.grid(row=0, column=0, padx=10, pady=(10, 0),sticky="e")
-
         self.green = TeamFrame(self, "Green")
-        self.green.grid(row=0, column=1, padx=10, pady=(10, 0),sticky="w")
+
+        self.red.grid(row=0, column=0,sticky="e")
+        self.green.grid(row=0, column=1,sticky="w")
+
+    def store_query(self,id,color):
+        response = query(id)
+        if(len(response) > 0):
+            player = (id, response)
+            if color == "Red":
+                self.player_list_r.append(player)
+            else:
+                self.player_list_g.append(player)
+            return response
+        else:
+            self.askForCodename()
+            return ""
+
+    
+    def askForCodename(self):
+        pass
+
 
         
         

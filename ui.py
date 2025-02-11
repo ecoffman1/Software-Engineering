@@ -78,7 +78,7 @@ class App(ctk.CTk):
         self.splash = Splash(self)
 
     def player_entry(self):
-        self.state("zoomed")
+        self.state("normal")
         self.splash.destroy()
 
         # setup UI structure

@@ -6,8 +6,13 @@ import json
 
 import json
 
-def changeSettings(setting, newValue):
+def changeSettings():
     try:
+
+        # get user input for setting and new value
+        setting = input("Enter the setting you would like to change: ").strip()
+        newValue = input(f"Enter the value you would like to change {setting} to: ").strip()
+
         # read existing configuration
         with open("config.json", "r") as config_file:
             config = json.load(config_file)
@@ -31,5 +36,3 @@ def changeSettings(setting, newValue):
     except json.JSONDecodeError:
         print("Error: Invalid JSON format in config.json!")
 
-# example usage
-# changeSettings("udp_ip", "127.0.0.2")

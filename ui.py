@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
-from changeSettings import changeSettings
-import time
+from UDP.changeSettings import changeSettings
+from database import Database
 
 def query(id):
     if(id.isnumeric()):
@@ -62,21 +62,19 @@ class TeamFrame(ctk.CTkFrame):
         else:
             box.delete(0, 999)
 
-    
-
-
-
 class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.withdraw()
         self.player_list_g = []
         self.player_list_r = []
+
+        # Initialize database connection
+        self.db = Database()
+        self.db.connect()
       
     def splash(self):
         self.splash = Splash(self)
-
-    
 
     def player_entry(self):
         self.state("normal")
@@ -104,6 +102,11 @@ class App(ctk.CTk):
         response = query(id)
         if(len(response) > 0):
             player = (id, response)
+
+            #TODO: Prevent the player data being inserted multiple times.
+            # Insert player into the database
+            self.db.add_player(id, response)
+
             if color == "Red":
                 self.player_list_r.append(player)
             else:
@@ -117,9 +120,6 @@ class App(ctk.CTk):
     def askForCodename(self):
         pass
 
-
-        
-        
 
 
 app = App()

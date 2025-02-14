@@ -4,8 +4,6 @@ import json
 # setting is name of setting (ex: "udp_ip")
 # newValue is what it will be changed to
 
-import json
-
 def changeSettings():
     try:
 

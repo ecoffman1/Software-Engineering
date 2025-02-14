@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
+from changeSettings import changeSetttings
 import time
 
 def query(id):
@@ -77,6 +78,9 @@ class App(ctk.CTk):
     def splash(self):
         self.splash = Splash(self)
 
+    def onChangeSettings(self):
+        changeSettings()
+
     def player_entry(self):
         self.state("normal")
         self.splash.destroy()
@@ -91,6 +95,9 @@ class App(ctk.CTk):
 
         self.red.grid(row=0, column=0,sticky="e")
         self.green.grid(row=0, column=1,sticky="w")
+
+        self.button = ctk.CTkButton(self, text = "Change UDP Port", command = self.onChangeSettings)
+        self.button.grid(row = 1, column = 0, culmnspan = 2, pady = 10, padx = 10, sticky = "sew")
 
     def store_query(self,id,color):
         response = query(id)

@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
-from changeSettings import changeSetttings
+from changeSettings import changeSettings
 import time
 
 def query(id):
@@ -52,7 +52,6 @@ class TeamFrame(ctk.CTkFrame):
             row[1].grid(row=i+1, column=2,padx=(0,10), pady=5, sticky="ne")
             self.widgets.append(row)
 
-
     def validate(self, event):
         box = event.widget
         response = self.master.store_query(box.get(),self.bg_color)
@@ -62,9 +61,8 @@ class TeamFrame(ctk.CTkFrame):
                     self.widgets[i][1].configure(text=response)
         else:
             box.delete(0, 999)
-        
 
-
+    
 
 
 
@@ -78,8 +76,7 @@ class App(ctk.CTk):
     def splash(self):
         self.splash = Splash(self)
 
-    def onChangeSettings(self):
-        changeSettings()
+    
 
     def player_entry(self):
         self.state("normal")
@@ -95,9 +92,13 @@ class App(ctk.CTk):
 
         self.red.grid(row=0, column=0,sticky="e")
         self.green.grid(row=0, column=1,sticky="w")
+        
+        # Create and place the button
+        self.button = ctk.CTkButton(self, text="Change UDP Port", command=self.on_button_click)
+        self.button.grid(row=1, column=0, columnspan=2, pady=10, padx=10, sticky="sew")
 
-        self.button = ctk.CTkButton(self, text = "Change UDP Port", command = self.onChangeSettings)
-        self.button.grid(row = 1, column = 0, culmnspan = 2, pady = 10, padx = 10, sticky = "sew")
+    def on_button_click(self):
+        changeSettings()
 
     def store_query(self,id,color):
         response = query(id)

@@ -93,11 +93,8 @@ class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.withdraw()
-        self.player_list_g = [[None,None] for i in range(15)]
-        self.player_list_r = [[None,None] for i in range(15)]
-        self.popup = None
-        
-        self.curid = None
+        self.player_list_g = [[None,None,None] for i in range(15)]
+        self.player_list_r = [[None,None,None] for i in range(15)]
 
         # Initialize database connection
         self.db = Database()
@@ -142,6 +139,7 @@ class App(ctk.CTk):
 
     def store_query(self,id,color):
         #TODO Joey this should be a query method called from self.db that returns the codename if there  is one or an empty string if there isnt
+        self.curid = id
         response = query(id)
         if(len(response) > 0):
             player = (id, response)
@@ -149,22 +147,20 @@ class App(ctk.CTk):
             #TODO Joey I keep getting an error that the cursor is none for the add_player method fixed issue of being called twice
             #self.db.add_player(id, response)
 
-            if color == "Red":
-                self.player_list_r.append(player)
-            else:
-                self.player_list_g.append(player)
-            return response
+            self.store_codename(id, response)
+            self.askForEquipmentID()
         else:
-            self.curid = id
             self.askForCodename()
-            return ""
+
+
+        return response
         
 
     def clear(self, row, color):
         if(color == "Red"):
-            self.player_list_r[row] = [None,None]
+            self.player_list_r[row] = [None,None,None]
         else:
-            self.player_list_g[row] = [None,None]
+            self.player_list_g[row] = [None,None,None]
 
     def store_id(self,id):
         red_index = self.red.findRow(id)
@@ -187,11 +183,17 @@ class App(ctk.CTk):
             self.player_list_g[green_index][0] = id
             self.player_list_g[green_index][1] = codename
             self.green.set(green_index, codename)
+    
+    def storeEquipmentID(self, id):
+        red_index = self.red.findRow(self.curid)
+        green_index = self.green.findRow(self.curid)
+
+        if(red_index > -1):
+            self.player_list_r[red_index][2] = id
+        if(green_index > -1):
+            self.player_list_g[green_index][2] = id
 
     def askForCodename(self):
-        if(self.popup != None):
-            return
-        
         #Lock input for app
         self.lock()
 
@@ -208,16 +210,43 @@ class App(ctk.CTk):
         self.popup_entry.bind("<Return>", self.codenameRecieved)
         self.popup_entry.grid(row = 1, column = 0, pady=10)
         self.popup_entry.focus_force()
+
+    def askForEquipmentID(self):
+        #Lock input for app
+        self.lock()
+
+        #Frame for popup
+        self.popup = ctk.CTkFrame(self)
+        self.popup.place(relx = .5, rely = .5, anchor = "center")
+        
+        #Instructions
+        self.popup_instructions = ctk.CTkLabel(self.popup,width = 10, text="Please enter your\nequipment ID")
+        self.popup_instructions.grid(row = 0, column = 0, padx = 10, pady = 10)
+
+        #Entrybox for codename
+        self.popup_entry = ctk.CTkEntry(self.popup,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
+        self.popup_entry.bind("<Return>", self.equipIDRecieved)
+        self.popup_entry.grid(row = 1, column = 0, pady=10)
+        self.popup_entry.focus_force()
+    
+    def equipIDRecieved(self, event):
+        id = event.widget.get()
+        if(not id.isnumeric()):
+            self.popup.destroy()
+            self.askForEquipmentID()
+            return
+        self.storeEquipmentID(id)
+        self.unlock()
+        self.popup.destroy()
+        #TODO Joey we need to broadcast this equipment id over UDP
         
     def codenameRecieved(self, event):
         codename = event.widget.get()
         self.store_codename(self.curid,codename)
-        print(self.player_list_g)
-        print(self.player_list_r)
         #TODO Joey we need to store the self.curid and codename in the database
         self.unlock()
         self.popup.destroy()
-        self.popup = None
+        self.askForEquipmentID()
 
 
 

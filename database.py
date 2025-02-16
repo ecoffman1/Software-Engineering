@@ -1,5 +1,6 @@
 import psycopg2
 import json
+from UDP.UDP_Client import client
 
 class Database():
     def __init__(self, config_file='UDP/config.json'):
@@ -57,6 +58,9 @@ class Database():
         query = "INSERT INTO players (id, codename) VALUES (%s, %s)"
         params = (name, codename)
         self.execute_query(query, params)
+
+        # Broadcast the player id over client udp port
+        client(name)
         
     # Closes the database connection
     def close(self):

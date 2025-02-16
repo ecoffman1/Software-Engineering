@@ -1,6 +1,5 @@
 import psycopg2
 import json
-from UDP.UDP_Client import client
 
 class Database():
     def __init__(self, config_file='UDP/config.json'):
@@ -33,7 +32,6 @@ class Database():
             if self.db_params:
                 self.conn = psycopg2.connect(**self.db_params)
                 self.cursor = self.conn.cursor()
-                print("Database connection established.")
             else:
                 print("Failed to load database connection parameters")
         except psycopg2.Error as e:
@@ -54,13 +52,22 @@ class Database():
             return None
     
     # Add new player into the database
-    def add_player(self, name, codename=None):
+    def add_player(self, playerId, codename=None):
         query = "INSERT INTO players (id, codename) VALUES (%s, %s)"
-        params = (name, codename)
+        params = (playerId, codename)
         self.execute_query(query, params)
 
-        # Broadcast the player id over client udp port
-        client(name)
+    # Check if codename exists, if it does, return it.
+    def get_codename(self, equipmentId):
+        query = "SELECT codename FROM PLAYERS WHERE ID = %s"
+        params = (equipmentId,)  # Ensure it's passed as a tuple
+        result = self.execute_query(query, params)
+        
+        # If result is not None, we have to check if there are results to return
+        if result and len(result) > 0:
+            return result[0][0]  # Extract the codename from the tuple of results
+        else:
+            return None
         
     # Closes the database connection
     def close(self):

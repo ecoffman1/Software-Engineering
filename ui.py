@@ -1,12 +1,8 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image
 from UDP.changeSettings import changeSettings
+from UDP.UDP_Client import broadcastEquipmentId
 from database import Database
-
-def query(id):
-    if(id == 1):
-        return "Player1"
-    return ""
 
 
 class Splash(ctk.CTkToplevel):
@@ -47,7 +43,7 @@ class TeamFrame(ctk.CTkFrame):
             num.grid(row=i+1, column=0,padx=(5,0), pady=5, sticky="ne")
             row[0] = ctk.CTkEntry(self,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
             row[0].grid(row=i+1, column=1,padx=(5,0), pady=5, sticky="nw")
-            row[0].bind("<FocusOut>", self.validate)
+            row[0].bind("<Return>", self.validate)
             row[1] = ctk.CTkLabel(self, width = 200, height=30, fg_color="White", text_color="Black",text="")
             row[1].grid(row=i+1, column=2,padx=(0,10), pady=5, sticky="ne")
             self.widgets.append(row)
@@ -98,7 +94,6 @@ class App(ctk.CTk):
 
         # Initialize database connection
         self.db = Database()
-        self.db.connect()
 
     def lock(self):
         self.button.configure(state="disabled")
@@ -137,23 +132,18 @@ class App(ctk.CTk):
     
 
 
-    def store_query(self,id,color):
-        #TODO Joey this should be a query method called from self.db that returns the codename if there  is one or an empty string if there isnt
-        self.curid = id
-        response = query(id)
-        if(len(response) > 0):
-            player = (id, response)
-
-            #TODO Joey I keep getting an error that the cursor is none for the add_player method fixed issue of being called twice
-            #self.db.add_player(id, response)
-
-            self.store_codename(id, response)
+    def store_query(self,playerId,color):
+        self.curPlayerId = playerId
+        self.db.connect()
+        codename = self.db.get_codename(playerId)
+        self.db.close()
+        if codename is not None:
+            self.store_codename(playerId, codename)
             self.askForEquipmentID()
         else:
             self.askForCodename()
 
-
-        return response
+        return codename
         
 
     def clear(self, row, color):
@@ -185,8 +175,8 @@ class App(ctk.CTk):
             self.green.set(green_index, codename)
     
     def storeEquipmentID(self, id):
-        red_index = self.red.findRow(self.curid)
-        green_index = self.green.findRow(self.curid)
+        red_index = self.red.findRow(self.curPlayerId)
+        green_index = self.green.findRow(self.curPlayerId)
 
         if(red_index > -1):
             self.player_list_r[red_index][2] = id
@@ -230,20 +220,24 @@ class App(ctk.CTk):
         self.popup_entry.focus_force()
     
     def equipIDRecieved(self, event):
-        id = event.widget.get()
-        if(not id.isnumeric()):
+        equipmentId = event.widget.get()
+        if(not equipmentId.isnumeric()):
             self.popup.destroy()
             self.askForEquipmentID()
             return
-        self.storeEquipmentID(id)
+        self.storeEquipmentID(equipmentId)
         self.unlock()
         self.popup.destroy()
-        #TODO Joey we need to broadcast this equipment id over UDP
+        # Broadcast the equipment id over UDP
+        broadcastEquipmentId(equipmentId)
         
     def codenameRecieved(self, event):
         codename = event.widget.get()
-        self.store_codename(self.curid,codename)
-        #TODO Joey we need to store the self.curid and codename in the database
+        self.store_codename(self.curPlayerId,codename)
+        # Stores the player Id and codename in the database
+        self.db.connect()
+        self.db.add_player(self.curPlayerId, codename)
+        self.db.close()
         self.unlock()
         self.popup.destroy()
         self.askForEquipmentID()

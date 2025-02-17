@@ -23,7 +23,7 @@ Main software for Photon Laser Tag
     On Debian:
 
     ```bash
-    source *venvname*\Scripts\activate 
+    source *venvname*/Scripts/activate 
     ```
 
 3. **Install required system packages** (for Debian-based systems):

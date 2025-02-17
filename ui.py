@@ -128,7 +128,7 @@ class App(ctk.CTk):
         self.button.grid(row=1, column=0, columnspan=2, pady=10, padx=10, sticky="sew")
 
     
-       def updatePort(self):
+    def updatePort(self):
         #Lock input for app
         self.lock()
 

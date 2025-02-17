@@ -4,12 +4,12 @@ import json
 # setting is name of setting (ex: "udp_ip")
 # newValue is what it will be changed to
 
-def changeSettings():
+def changeSettings(setting, newValue):
     try:
 
         # get user input for setting and new value
-        setting = input("Enter the setting you would like to change: ").strip()
-        newValue = input(f"Enter the value you would like to change {setting} to: ").strip()
+        #setting = input("Enter the setting you would like to change: ").strip()
+        #newValue = input(f"Enter the value you would like to change {setting} to: ").strip()
 
         # read existing configuration
         with open("config.json", "r") as config_file:

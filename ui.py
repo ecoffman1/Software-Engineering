@@ -141,15 +141,15 @@ class App(ctk.CTk):
         self.popup_instructions.grid(row = 0, column = 0, padx = 10, pady = 10)
 
         #Entrybox for setting
-        self.settng = ctk.CTkEntry(self.popup,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
-        self.settng.bind("<Return>", self.settingsReceived)
-        self.settng.grid(row = 1, column = 0, pady=10)
-        self.settng.focus_force()
+        self.setting = ctk.CTkEntry(self.popup,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
+        self.setting.bind("<Return>", self.settingsReceived)
+        self.setting.grid(row = 1, column = 0, pady=10)
+        self.setting.focus_force()
 
         #Entrybox for value
         self.value = ctk.CTkEntry(self.popup,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
         self.value.bind("<Return>", self.settingsReceived)
-        self.value.grid(row = 1, column = 0, pady=10)
+        self.value.grid(row = 2, column = 0, pady=10)
         self.value.focus_force()
 
 

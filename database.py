@@ -53,9 +53,32 @@ class Database():
     
     # Add new player into the database
     def add_player(self, playerId, codename=None):
-        query = "INSERT INTO players (id, codename) VALUES (%s, %s)"
-        params = (playerId, codename)
-        self.execute_query(query, params)
+        if codename:
+            query = "INSERT INTO players (id, codename) VALUES (%s, %s)"
+            params = (playerId, codename)
+            self.execute_query(query, params)
+        else:
+            print("No codename provided, unable to add.")
+            
+
+    # Update a player's codename in the database
+    def update_codename(self, playerId, codename=None):
+        # Check if the playerId exists in the db
+        query = "SELECT ID FROM players WHERE ID = %s"
+        params = (playerId,)
+        result = self.execute_query(query, params)
+        
+        if result and len(result) > 0:
+            if codename:
+                query = "UPDATE players SET codename = %s WHERE ID = %s"
+                params = (codename, playerId)
+                self.execute_query(query, params)
+                print(f"Codename for player {playerId} updated to {codename}.")
+            else:
+                print("No codename provided, unable to update.")
+        else:
+            print(f"Player with ID {playerId} does not exist in the database.")
+
 
     # Check if codename exists, if it does, return it.
     def get_codename(self, equipmentId):

@@ -27,7 +27,7 @@ class TeamFrame(ctk.CTkFrame):
         else:
             self.color = "#0e450e"
         
-        self.configure(fg_color = self.color)
+        self.configure(fg_color = self.color, corner_radius=0)
 
         self.title = title
         self.bg_color = title
@@ -41,18 +41,23 @@ class TeamFrame(ctk.CTkFrame):
             row = [None, None]
             num = ctk.CTkLabel(self, width = 20, height=30,text=str(i+1).zfill(2))
             num.grid(row=i+1, column=0,padx=(5,0), pady=5, sticky="ne")
-            row[0] = ctk.CTkEntry(self,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
-            row[0].grid(row=i+1, column=1,padx=(5,0), pady=5, sticky="nw")
-            row[0].bind("<Return>", self.validate)
-            row[1] = ctk.CTkLabel(self, width = 200, height=30, fg_color="White", text_color="Black",text="")
-            row[1].grid(row=i+1, column=2,padx=(0,10), pady=5, sticky="ne")
+
+            entry = ctk.CTkEntry(self,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
+            entry.grid(row=i+1, column=1,padx=(5,0), pady=5, sticky="nw")
+            entry.bind("<Return>", self.validate)
+
+            label = ctk.CTkLabel(self, width = 200, height=30, fg_color="White", text_color="Black",text="")
+            label.grid(row=i+1, column=2,padx=(0,10), pady=5, sticky="ne")
+            label.bind("<Button-1>", self.codename_label_clicked)
+            row[0] = entry
+            row[1] = label
             self.widgets.append(row)
 
     def validate(self, event):
         box = event.widget
         id = box.get()
         if(not id.isnumeric()):
-            row = self.findRow(id)
+            row = self.find_row(id)
             self.widgets[row][1].configure(text="")
             self.master.clear(row,self.bg_color)
             box.delete(0,999)
@@ -67,7 +72,17 @@ class TeamFrame(ctk.CTkFrame):
             if(self.widgets[i][0].get() == id):
                 self.widgets[i][1].configure(text=response)
         return "break"
-
+    
+    # Event handler updating a codename
+    def codename_label_clicked(self, event):
+        rowNumber = event.widget.master.grid_info()["row"] - 1
+        playerId = self.widgets[rowNumber][0].get()
+        if playerId:
+            dialog = ctk.CTkInputDialog(text="New Codename:", title="Update Codename")
+            newCodename = dialog.get_input()
+            self.master.handleUpdateCodename(playerId, newCodename)
+            self.widgets[rowNumber][1].configure(text=newCodename)
+        
     def lock(self):
         for i in range(len(self.widgets)):
             self.widgets[i][0].configure(state="disabled")
@@ -76,14 +91,15 @@ class TeamFrame(ctk.CTkFrame):
         for i in range(len(self.widgets)):
             self.widgets[i][0].configure(state="normal")
     
-    def findRow(self, id):
-        for i in range(len(self.widgets)):
-            if(self.widgets[i][0].get() == id):
-                return i
-        return -1
-    
     def set(self, index, value):
         self.widgets[index][1].configure(text=value)
+
+    def find_row(self, id):
+        for i in range(len(self.widgets)):
+            if self.widgets[i][0].get() == id:
+                return i
+        return -1
+
 
 class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -185,8 +201,8 @@ class App(ctk.CTk):
             self.player_list_g[row] = [None,None,None]
 
     def store_id(self,id):
-        red_index = self.red.findRow(id)
-        green_index = self.green.findRow(id)
+        red_index = self.red.find_row(id)
+        green_index = self.green.find_row(id)
 
         if(red_index > -1):
             self.player_list_r[red_index][0] = id
@@ -194,8 +210,8 @@ class App(ctk.CTk):
             self.player_list_g[green_index][0] = id
     
     def store_codename(self,id, codename):
-        red_index = self.red.findRow(id)
-        green_index = self.green.findRow(id)
+        red_index = self.red.find_row(id)
+        green_index = self.green.find_row(id)
 
         if(red_index > -1):
             self.player_list_r[red_index][0] = id
@@ -205,10 +221,16 @@ class App(ctk.CTk):
             self.player_list_g[green_index][0] = id
             self.player_list_g[green_index][1] = codename
             self.green.set(green_index, codename)
+
+    # Handles updating codenames in the database
+    def handleUpdateCodename(self, playerId, newCodename):
+        self.db.connect()
+        self.db.update_codename(playerId, newCodename)
+        self.db.close()
     
     def storeEquipmentID(self, id):
-        red_index = self.red.findRow(self.curPlayerId)
-        green_index = self.green.findRow(self.curPlayerId)
+        red_index = self.red.find_row(self.curPlayerId)
+        green_index = self.green.find_row(self.curPlayerId)
 
         if(red_index > -1):
             self.player_list_r[red_index][2] = id

@@ -150,7 +150,6 @@ class App(ctk.CTk):
         self.value = ctk.CTkEntry(self.popup,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
         self.value.bind("<Return>", self.settingsReceived)
         self.value.grid(row = 2, column = 0, pady=10)
-        self.value.focus_force()
 
 
     def settingsReceived(self, event):

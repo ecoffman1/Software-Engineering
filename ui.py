@@ -3,6 +3,7 @@ from PIL import Image
 from UDP.changeSettings import changeSettings
 from UDP.UDP_Client import broadcastEquipmentId
 from database import Database
+from resource_loader import ResourceLoader
 
 
 class Splash(ctk.CTkToplevel):
@@ -12,7 +13,8 @@ class Splash(ctk.CTkToplevel):
         splash_height = 400
         self.overrideredirect(True)
         self.geometry(f"{splash_width}x{splash_height}+" + str(self.winfo_screenwidth() // 2 - 200) + "+" + str(self.winfo_screenheight() // 2 - 200)) # Center the splash screen
-        image = Image.open("logo.jpg")
+        loader = ResourceLoader()
+        image = loader.load_image("logo.jpg")
         photo = ctk.CTkImage(image, size=(splash_width,splash_height))
         label = ctk.CTkLabel(self,text = "", image=photo,width=splash_width, height=splash_height)
         label.pack()
@@ -108,8 +110,12 @@ class App(ctk.CTk):
         self.player_list_g = [[None,None,None] for i in range(15)]
         self.player_list_r = [[None,None,None] for i in range(15)]
 
+        # Initialize ResourceLoader and load the config file path
+        loader = ResourceLoader()
+        self.config_path = loader.load_json("UDP/config.json")
+
         # Initialize database connection
-        self.db = Database()
+        self.db = Database(self.config_path)
 
     def lock(self):
         self.button.configure(state="disabled")

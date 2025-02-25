@@ -42,10 +42,18 @@ Main software for Photon Laser Tag
     pip install -r requirements.txt
     ```
 
+5. **For devs to build:**
+    ```bash
+    pyinstaller ui.spec
+    ```
+
+
 ## Run the Program
 
-To start the program:
+To start the program in venv:
 
 ```bash
 python3 ui.py
+```
 
+To start the program after being built navigate to dist/ui and use ./ui (on the executable)

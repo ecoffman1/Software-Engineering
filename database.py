@@ -2,13 +2,19 @@ import psycopg2
 import json
 
 class Database():
-    def __init__(self, config_file='UDP/config.json'):
-        self.config_file = config_file
+    def __init__(self, config = None, config_path = None):
+        self.config_path = config_path
         self.conn = None
         self.cursor = None
 
-        # Retrieve database connection params from config file.
-        self.connect_params = self.load_config()
+        if config:
+            self.connect_params = config  
+        elif config_path:
+            # Retrieve database connection params from config file.
+            self.connect_params = self.load_config()
+        else:
+            self.connect_params = {}
+
         self.db_params = {
             'dbname': self.connect_params.get('dbname'),
             'user': self.connect_params.get('user')
@@ -17,13 +23,13 @@ class Database():
     # Load configuration from a JSON file
     def load_config(self):
         try:
-            with open(self.config_file, 'r') as f:
+            with open(self.config_path, 'r') as f:
                 return json.load(f)
         except FileNotFoundError:
-            print(f"Error: the file {self.config_file} was not found")
+            print(f"Error: the file {self.config_path} was not found")
             return {}
         except json.JSONDecodeError:
-            print(f"Error: the file {self.config_file} contains invalid JSON")
+            print(f"Error: the file {self.config_path} contains invalid JSON")
             return {}
 
     # Establish connection to database

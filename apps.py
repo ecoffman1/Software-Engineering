@@ -6,6 +6,8 @@ from database import Database
 from resource_loader import ResourceLoader
 from components import *
 
+ctk.set_appearance_mode("dark")
+
 class Splash(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -23,23 +25,11 @@ class PlayerEntry(ctk.CTk):
     def __init__(self, master, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.main = master
-        self.withdraw()
+        self.bind("<F5>",self.startGame)
+        self.geometry(str(self.winfo_screenwidth() // 2 - 200) + "+" + str(self.winfo_screenheight() // 2 - 500))
+
         self.player_list_g = master.player_list_g
         self.player_list_r = master.player_list_r
-
-        # Initialize ResourceLoader and load the config file path
-        loader = ResourceLoader()
-        self.config_path = loader.load_json("UDP/config.json")
-
-        # Initialize database connection
-        self.db = Database(self.config_path)
-      
-    def splash(self):
-        self.splash = Splash(self)
-
-    def player_entry(self):
-        self.state("normal")
-        self.splash.destroy()
 
         # setup UI structure
         self.grid_columnconfigure(0, weight=1)
@@ -52,26 +42,42 @@ class PlayerEntry(ctk.CTk):
         self.red.grid(row=0, column=0,sticky="e")
         self.green.grid(row=0, column=1,sticky="w")
         
+        self.buttonFrame = ctk.CTkFrame(self)
+        self.buttonFrame.grid(row=1,column=0,columnspan=2,sticky="nsew")
+        self.buttonFrame.grid_columnconfigure((0, 1, 2), weight=1)
         # Create and place the button
-        self.button = ctk.CTkButton(self, text="Change UDP Port", command=self.updatePort)
-        self.button.grid(row=1, column=0, pady=10, padx=10, sticky="s")
+        self.button = ctk.CTkButton(self.buttonFrame, text="Change UDP Port", command=self.updatePort)
+        self.button.grid(row=1, column=0, pady=10, padx=10, sticky="ew")
 
-        self.start = ctk.CTkButton(self, text="F5 Start Game", command=self.startGame)
-        self.start.grid(row=1, column=1, pady=10, padx=10, sticky="s")
+        self.start = ctk.CTkButton(self.buttonFrame, text="F5 Start Game", command=self.startGame)
+        self.start.grid(row=1, column=1, pady=10, padx=10,sticky="ew")
+
+        self.clearButton = ctk.CTkButton(self.buttonFrame, text="F12 Clear Players", command=self.clear)
+        self.clearButton.grid(row=1, column=2, pady=10, padx=10, sticky="ew")
+
+        # Initialize ResourceLoader and load the config file path
+        loader = ResourceLoader()
+        self.config_path = loader.load_json("UDP/config.json")
+
+        # Initialize database connection
+        self.db = Database(self.config_path)
+
+        self.withdraw()
+      
+    def splash(self):
+        self.splash = Splash(self)
+
+    def show(self):
+        self.state("normal")
+        self.splash.destroy()
+
     
     def updatePort(self):
         port = portPopup(self)
         values = port.get_input()
-
-    def settingsReceived(self, event):
-        #get values
-        setting = self.setting.get()
-        value = self.value.get()
-
-        changeSettings(setting, value)
-
-        self.unlock()
-        self.popup.destroy()
+        if(not values):
+            return
+        changeSettings(values)
 
     def queryID(self,playerId):
         self.db.connect()
@@ -146,13 +152,22 @@ class PlayerEntry(ctk.CTk):
         if(not equipmentID):
             self.clearRow(row, color)
             return
-
+        
         self.storeEquipmentID(equipmentID, color, row)
 
         # Broadcast the equipment id over UDP
         broadcastEquipmentId(equipmentID)
 
-    def startGame(self):
+    def clear(self, *args):
+        print(self.main.player_list_g)
+        for i in range(len(self.player_list_g)):
+            self.player_list_g[i] = [None,None,None]
+            self.player_list_r[i] = [None,None,None]
+        print(self.main.player_list_g)
+        self.red.clear()
+        self.green.clear()
+    
+    def startGame(self, *args):
         self.main.switchPlayAction()
 
 class PlayAction(ctk.CTk):

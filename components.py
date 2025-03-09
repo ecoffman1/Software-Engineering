@@ -1,4 +1,5 @@
 import customtkinter as ctk
+ctk.set_appearance_mode("dark")
 
 class TeamFrame(ctk.CTkFrame):
     def __init__(self, master, title):
@@ -75,6 +76,11 @@ class TeamFrame(ctk.CTkFrame):
     def clearRow(self,row):
         self.widgets[row][1].configure(text="")
         self.widgets[row][0].delete(0,999)
+    
+    def clear(self):
+        for i in range(len(self.widgets)):
+            self.clearRow(i)
+            
 
 
 
@@ -83,9 +89,9 @@ class portPopup(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
 
         self.inputs = {
-        "UDP IP": "127.0.0.1",
-        "Broadcast Port": 7500,
-        "Receive Port": 7501,
+        "udp_ip": "127.0.0.1",
+        "broadcastPort": 7500,
+        "receivePort": 7501,
         }
         
         self.entries = {}
@@ -96,22 +102,28 @@ class portPopup(ctk.CTkToplevel):
 
             entry = ctk.CTkEntry(self,width = 100, height=30,placeholder_text=label,corner_radius=0, fg_color="White", text_color="Black")
             entry.grid(row=i, column=1,padx=(5,0), pady=5)
-            entry.bind("<Return>", self.update)
 
             self.entries[key] = entry
 
         okButton = ctk.CTkButton(self, text = "Ok", command=self.submit)
         okButton.grid(row=3, column=0, padx=(5,0), pady=5)
 
-        cancelButton = ctk.CTkButton(self, text = "Cancel", command=self.submit)
+        cancelButton = ctk.CTkButton(self, text = "Cancel", command=self.cancel)
         cancelButton.grid(row=3, column=1, padx=(5,0), pady=5)
 
     def submit(self):
+        self.update()
+        self.destroy()
+
+    def cancel(self):
+        self.inputs = None
         self.destroy()
 
     def update(self):
         for key in self.entries:
-            self.inputs[key] = self.entries[key].get()
+            value = self.entries[key].get()
+            if(value != ""):
+                self.inputs[key] = value
 
     def get_input(self):
         self.master.wait_window(self)

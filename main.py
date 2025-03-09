@@ -7,7 +7,7 @@ class Main():
 
         self.app = PlayerEntry(self)
         self.app.splash()
-        self.app.after(3000, self.app.player_entry)
+        self.app.after(3000, self.app.show)
         self.app.mainloop()
     
     def switchEntry(self):

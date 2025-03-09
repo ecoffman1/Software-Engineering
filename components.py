@@ -119,12 +119,27 @@ class portPopup(ctk.CTkToplevel):
         self.inputs = None
         self.destroy()
 
+    def keyNeedInt(key):
+        if(key == "broadcastPort" or key == "receievePort"):
+            return True
+
     def update(self):
         for key in self.entries:
             value = self.entries[key].get()
+            needInt = portPopup.keyNeedInt(key)
+            if(needInt and not value.isnumeric()):
+                #maybe replace later with popup
+                print("port numbers must be numbers!")
+                self.cancel()
+                return
+
+            if(needInt):
+                value = int(value)
+
             if(value != ""):
                 self.inputs[key] = value
 
+        return False
     def get_input(self):
         self.master.wait_window(self)
         return self.inputs

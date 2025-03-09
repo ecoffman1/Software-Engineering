@@ -9,15 +9,15 @@ class Main():
         self.app.splash()
         self.app.after(3000, self.app.show)
         self.app.mainloop()
-    
-    def switchEntry(self):
-        self.app.destroy()
-        self.app = PlayerEntry(self)
-        self.app.mainloop()
 
     def switchPlayAction(self):
-        self.app.destroy()
-        self.app = PlayAction()
-        self.app.mainloop()
+        self.app.withdraw()
+        count = CountDown()
+        self.window = PlayAction()
+        self.window.withdraw()
+        self.window.wait_window(count)
+        self.window.show()
+        self.app.wait_window(self.window)
+        self.app.show()
 
 Main()

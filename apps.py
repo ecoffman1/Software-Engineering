@@ -8,18 +8,62 @@ from components import *
 
 ctk.set_appearance_mode("dark")
 
+
+def center_window(window):
+    window.update_idletasks()
+    width = window.winfo_width()
+    height = window.winfo_height()
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    window.geometry(f"{x}+{y}")
+
 class Splash(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        splash_width = 600
-        splash_height = 400
         self.overrideredirect(True)
-        self.geometry(f"{splash_width}x{splash_height}+" + str(self.winfo_screenwidth() // 2 - 200) + "+" + str(self.winfo_screenheight() // 2 - 200)) # Center the splash screen
         loader = ResourceLoader()
         image = loader.load_image("logo.jpg")
-        photo = ctk.CTkImage(image, size=(splash_width,splash_height))
-        label = ctk.CTkLabel(self,text = "", image=photo,width=splash_width, height=splash_height)
-        label.pack()
+        scale = 5
+        img_width = image.width//scale
+        img_height = image.height//scale
+        photo = ctk.CTkImage(image, size=(img_width,img_height))
+        label = ctk.CTkLabel(self,text = "", image=photo)
+        label.grid(row=0,column=0)
+        center_window(self)
+
+class CountDown(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.overrideredirect(True)
+        loader = ResourceLoader()
+        self.countNum = 0
+        background_image = loader.load_image("countdown_images/background.tif")
+        background_photo = ctk.CTkImage(background_image, size=(background_image.width,background_image.height))
+        self.background = ctk.CTkLabel(self,text = "", image=background_photo)
+        self.background.grid(row=0, column=0)
+        center_window(self)
+
+        counter_image = loader.load_image("countdown_images/0.tif")
+        counter_photo = ctk.CTkImage(counter_image, size=(counter_image.width,counter_image.height))
+        self.counter = ctk.CTkLabel(self,text="",image=counter_photo)
+        self.counter.place(x=171,y=204)
+        self.after(1000,self.count)
+        
+
+    def count(self):
+            if(self.countNum == 30):
+                self.destroy()
+                return
+            self.countNum += 1
+            loader = ResourceLoader()
+            counter_image = loader.load_image(f"countdown_images/{self.countNum}.tif")
+            counter_photo = ctk.CTkImage(counter_image, size=(counter_image.width,counter_image.height))
+            self.counter.configure(image=counter_photo)
+            self.after(1000,self.count)
+            
+
 
 class PlayerEntry(ctk.CTk):
     def __init__(self, master, *args, **kwargs):
@@ -27,7 +71,6 @@ class PlayerEntry(ctk.CTk):
         self.main = master
         self.bind("<F5>",self.startGame)
         self.bind("<F12>",self.clear)
-        self.geometry(str(self.winfo_screenwidth() // 2 - 200) + "+" + str(self.winfo_screenheight() // 2 - 500))
 
         self.player_list_g = master.player_list_g
         self.player_list_r = master.player_list_r
@@ -64,13 +107,15 @@ class PlayerEntry(ctk.CTk):
         self.db = Database(self.config_path)
 
         self.withdraw()
+        
       
     def splash(self):
         self.splash = Splash(self)
 
     def show(self):
-        self.state("normal")
         self.splash.destroy()
+        self.state("normal")
+        center_window(self)
 
     
     def updatePort(self):
@@ -169,9 +214,13 @@ class PlayerEntry(ctk.CTk):
     def startGame(self, *args):
         self.main.switchPlayAction()
 
-class PlayAction(ctk.CTk):
+class PlayAction(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        center_window(self)
         self.placeholder = ctk.CTkLabel(self, text="New Menu")
         self.placeholder.grid(row=0,column=0,padx=30,pady=30)
+
+    def show(self):
+        self.state("normal")
         

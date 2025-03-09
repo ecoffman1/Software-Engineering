@@ -1,6 +1,6 @@
 {
     "udp_ip": "127.0.0.1",
-    "broadcastPort": 7502,
+    "broadcastPort": 7500,
     "receivePort": 7501,
     "dbname": "photon",
     "user": "student"

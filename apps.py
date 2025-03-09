@@ -26,6 +26,7 @@ class PlayerEntry(ctk.CTk):
         super().__init__(*args, **kwargs)
         self.main = master
         self.bind("<F5>",self.startGame)
+        self.bind("<F12>",self.clear)
         self.geometry(str(self.winfo_screenwidth() // 2 - 200) + "+" + str(self.winfo_screenheight() // 2 - 500))
 
         self.player_list_g = master.player_list_g
@@ -159,11 +160,9 @@ class PlayerEntry(ctk.CTk):
         broadcastEquipmentId(equipmentID)
 
     def clear(self, *args):
-        print(self.main.player_list_g)
         for i in range(len(self.player_list_g)):
             self.player_list_g[i] = [None,None,None]
             self.player_list_r[i] = [None,None,None]
-        print(self.main.player_list_g)
         self.red.clear()
         self.green.clear()
     

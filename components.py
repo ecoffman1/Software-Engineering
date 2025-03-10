@@ -143,4 +143,44 @@ class portPopup(ctk.CTkToplevel):
     def get_input(self):
         self.master.wait_window(self)
         return self.inputs
+    
+class TeamLeaderBoard(ctk.CTkFrame):
+    def __init__(self, master, color,codeNames):
+        super().__init__(master)
+        
+        self.team = color
+        self.players = {}
+        self.slots = []
+        numPlayerSlots = 16
+
+        for codenName in codeNames:
+            self.players[codenName] = 0
+
+        if color == "Red":
+            displayColor = "#591717"
+        else:
+            displayColor  = "#0e450e"
+
+        self.configure(fg_color = displayColor)
+
+        title = ctk.CTkLabel(self, text=color,font=("Normal",40))
+        title.grid(row=0,column=0)
+
+        for i in range(numPlayerSlots):
+            slot = LeaderBoardSlot(self)
+            slot.grid(row=i+1,column=0)
+
+class LeaderBoardSlot(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.player = ctk.CTkLabel(self,text = "")
+        self.player.grid(row=0,column=0)
+
+        self.score = ctk.CTkLabel(self,text="")
+        self.score.grid(row=0,column=0)
+
+
+
+
 

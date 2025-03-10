@@ -218,8 +218,13 @@ class PlayAction(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         center_window(self)
-        self.placeholder = ctk.CTkLabel(self, text="New Menu")
-        self.placeholder.grid(row=0,column=0,padx=30,pady=30)
+        self.columnconfigure(1,weight=1)
+        
+        self.greenLeaderBoard = TeamLeaderBoard(self,"Green", [])
+        self.greenLeaderBoard.grid(row=0,column=0)
+
+        self.redLeaderBoard = TeamLeaderBoard(self,"Red", [])
+        self.redLeaderBoard.grid(row=0,column=2)
 
     def show(self):
         self.state("normal")

@@ -84,8 +84,8 @@ class TeamFrame(ctk.CTkFrame):
 
 
 
-class portPopup(ctk.CTkToplevel):
-    def __init__(self, master, *args, **kwargs):
+class PortPopup(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.inputs = {
@@ -230,13 +230,25 @@ class GameTimer(ctk.CTkFrame):
         self.counter.place(relx=.5,rely=.5,anchor=ctk.CENTER)
 
     def count(self):
+        if(self.seconds<0):
+            self.convertTimer()
+            return
         mins,secs = divmod(self.seconds,60)
         self.seconds -= 1
-        if(self.seconds<0):
-            self.master.destroy()
-            return
         self.counter.configure(text='{:01d}:{:02d}'.format(mins, secs))
         self.after(1000,self.count)
+
+    def convertTimer(self):
+        self.counter.destroy()
+        button = ctk.CTkButton(self,text="Return to Player Entry", command=self.clicked)
+        button.place(relx=.5,rely=.5,anchor=ctk.CENTER)
+
+    def clicked(self):
+        self.master.destroy()
+
+        
+
+    
 
 
 

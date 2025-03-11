@@ -119,7 +119,7 @@ class PlayerEntry(ctk.CTk):
 
     
     def updatePort(self):
-        port = portPopup(self)
+        port = PortPopup(self)
         values = port.get_input()
         if(not values):
             return
@@ -240,4 +240,6 @@ class PlayAction(ctk.CTkToplevel):
 
         self.actionLog.after(5000,lambda: self.actionLog.update("first"))
         self.actionLog.after(10000,lambda: self.actionLog.update("second"))
+
+
         

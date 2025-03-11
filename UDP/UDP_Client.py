@@ -51,5 +51,15 @@ def broadcastEquipmentId(equipmentId):
     UDPClientSocket.sendto(equipmentId.encode(), (udp_ip, broadcastPort))
     print(f"Equipment id sent to: {udp_ip}:{broadcastPort}")
 
+def broadcastStartGame():
+    startCode = "202"
+    UDPClientSocket.sendto(startCode.encode(), (udp_ip, broadcastPort))
+    print(f"Code {startCode} sent to: {udp_ip}:{broadcastPort}")
+
+def broadcastEndGame():
+    endCode = "221"
+    for i in range(3):
+        UDPClientSocket.sendto(endCode.encode(), (udp_ip, broadcastPort))
+        print(f"Code {endCode} sent to: {udp_ip}:{broadcastPort}")
 
     

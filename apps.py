@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 from UDP.changeSettings import changeSettings
-from UDP.UDP_Client import broadcastEquipmentId
+from UDP.UDP_Client import broadcastEquipmentId, broadcastEndGame,broadcastStartGame
 from database import Database
 from resource_loader import ResourceLoader
 from components import *
@@ -235,11 +235,18 @@ class PlayAction(ctk.CTkToplevel):
     def show(self):
         self.state("normal")
         center_window(self)
+        self.startGame()
 
+    def startGame(self):
+        broadcastStartGame()
         self.timer.count()
 
         self.actionLog.after(5000,lambda: self.actionLog.update("first"))
         self.actionLog.after(10000,lambda: self.actionLog.update("second"))
+
+
+    def endGame(self):
+        broadcastEndGame()
 
 
         

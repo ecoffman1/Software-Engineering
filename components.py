@@ -126,7 +126,7 @@ class PortPopup(ctk.CTkToplevel):
     def update(self):
         for key in self.entries:
             value = self.entries[key].get()
-            needInt = portPopup.keyNeedInt(key)
+            needInt = PortPopup.keyNeedInt(key)
             if(needInt and not value.isnumeric()):
                 #maybe replace later with popup
                 print("port numbers must be numbers!")
@@ -232,6 +232,7 @@ class GameTimer(ctk.CTkFrame):
     def count(self):
         if(self.seconds<0):
             self.convertTimer()
+            self.master.endGame()
             return
         mins,secs = divmod(self.seconds,60)
         self.seconds -= 1

@@ -38,14 +38,14 @@ class CountDown(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.overrideredirect(True)
         loader = ResourceLoader()
-        self.countNum = 0
+        self.countNum = 30
         background_image = loader.load_image("countdown_images/background.tif")
         background_photo = ctk.CTkImage(background_image, size=(background_image.width,background_image.height))
         self.background = ctk.CTkLabel(self,text = "", image=background_photo)
         self.background.grid(row=0, column=0)
         center_window(self)
 
-        counter_image = loader.load_image("countdown_images/0.tif")
+        counter_image = loader.load_image("countdown_images/30.tif")
         counter_photo = ctk.CTkImage(counter_image, size=(counter_image.width,counter_image.height))
         self.counter = ctk.CTkLabel(self,text="",image=counter_photo)
         self.counter.place(x=171,y=204)
@@ -53,10 +53,10 @@ class CountDown(ctk.CTkToplevel):
         
 
     def count(self):
-            if(self.countNum == 30):
+            if(self.countNum == 0):
                 self.destroy()
                 return
-            self.countNum += 1
+            self.countNum -= 1
             loader = ResourceLoader()
             counter_image = loader.load_image(f"countdown_images/{self.countNum}.tif")
             counter_photo = ctk.CTkImage(counter_image, size=(counter_image.width,counter_image.height))
@@ -215,17 +215,29 @@ class PlayerEntry(ctk.CTk):
         self.main.switchPlayAction()
 
 class PlayAction(ctk.CTkToplevel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self,data, *args, **kwargs):
         super().__init__(*args, **kwargs)
         center_window(self)
         self.columnconfigure(1,weight=1)
-        
-        self.greenLeaderBoard = TeamLeaderBoard(self,"Green", [])
-        self.greenLeaderBoard.grid(row=0,column=0)
 
-        self.redLeaderBoard = TeamLeaderBoard(self,"Red", [])
-        self.redLeaderBoard.grid(row=0,column=2)
+        self.redLeaderBoard = TeamLeaderBoard(self,"Red", data["Red"])
+        self.redLeaderBoard.grid(row=0,column=0,rowspan=2)
+        
+        self.greenLeaderBoard = TeamLeaderBoard(self,"Green", data["Green"])
+        self.greenLeaderBoard.grid(row=0,column=2,rowspan=2)
+
+        self.actionLog = ActionLog(self)
+        self.actionLog.grid(row=0,column=1,sticky="ns")
+
+        self.timer = GameTimer(self)
+        self.timer.grid(row=1,column=1,sticky="nsew")
 
     def show(self):
         self.state("normal")
+        center_window(self)
+
+        self.timer.count()
+
+        self.actionLog.after(5000,lambda: self.actionLog.update("first"))
+        self.actionLog.after(10000,lambda: self.actionLog.update("second"))
         

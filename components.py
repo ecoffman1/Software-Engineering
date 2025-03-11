@@ -153,8 +153,8 @@ class TeamLeaderBoard(ctk.CTkFrame):
         self.slots = []
         numPlayerSlots = 16
 
-        for codenName in codeNames:
-            self.players[codenName] = 0
+        for id in codeNames:
+            self.players[codeNames[id]] = 0
 
         if color == "Red":
             displayColor = "#591717"
@@ -166,19 +166,83 @@ class TeamLeaderBoard(ctk.CTkFrame):
         title = ctk.CTkLabel(self, text=color,font=("Normal",40))
         title.grid(row=0,column=0)
 
+        self.teamScore = LeaderBoardSlot(self)
+        self.teamScore.enterPlayer(f"{color} Team Score")
+        self.teamScore.grid(row=1,column=0)
+
         for i in range(numPlayerSlots):
             slot = LeaderBoardSlot(self)
-            slot.grid(row=i+1,column=0)
+            slot.grid(row=i+2,column=0)
+            self.slots.append(slot)
+        
+        for i, codename in enumerate(self.players):
+            self.slots[i].enterPlayer(codename)
 
 class LeaderBoardSlot(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
-        self.player = ctk.CTkLabel(self,text = "")
+        if self.master.team == "Red":
+            self.color = "#591717"
+        else:
+            self.color  = "#0e450e"
+
+        self.player = ctk.CTkLabel(self,text = "",width=200,fg_color=self.color)
         self.player.grid(row=0,column=0)
 
-        self.score = ctk.CTkLabel(self,text="")
-        self.score.grid(row=0,column=0)
+        self.score = ctk.CTkLabel(self,text="",width=100,fg_color=self.color)
+        self.score.grid(row=0,column=1)
+
+    def enterPlayer(self,codename):
+        self.player.configure(text=codename)
+        self.score.configure(text=0)
+
+class ActionLog(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        eventLimit = 10
+        self.events = ["" for i in range(eventLimit)]
+        self.lines = []
+
+        self.configure(fg_color="Black")
+
+        for i in range (eventLimit):
+            line = ctk.CTkLabel(self,text="",width = 300, fg_color="Black")
+            line.grid(row=eventLimit-i,column=0)
+            self.lines.append(line)
+
+    def update(self, message):
+        self.events.pop()
+        self.events.insert(0,message)
+
+        for i in range(len(self.lines)):
+            self.lines[i].configure(text=self.events[i])
+
+class GameTimer(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.seconds = 6*60
+        self.configure(fg_color="Black")
+
+        self.counter = ctk.CTkLabel(self,text="",font=("Normal",60),fg_color="Black",justify=ctk.CENTER)
+        self.counter.place(relx=.5,rely=.5,anchor=ctk.CENTER)
+
+    def count(self):
+        mins,secs = divmod(self.seconds,60)
+        self.seconds -= 1
+        if(self.seconds<0):
+            self.master.destroy()
+            return
+        self.counter.configure(text='{:01d}:{:02d}'.format(mins, secs))
+        self.after(1000,self.count)
+
+
+
+
+
+
 
 
 

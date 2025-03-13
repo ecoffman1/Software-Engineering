@@ -10,7 +10,7 @@ data = [
     ]
 
 a = Analysis(
-    ['ui.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=data,

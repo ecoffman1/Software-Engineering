@@ -44,7 +44,7 @@ Main software for Photon Laser Tag
 
 5. **For devs to build:**
     ```bash
-    pyinstaller ui.spec
+    pyinstaller main.spec
     ```
 
 
@@ -53,7 +53,7 @@ Main software for Photon Laser Tag
 To start the program in venv:
 
 ```bash
-python3 ui.py
+python3 main.py
 ```
 
 To start the program after being built navigate to dist/ui and use ./ui (on the executable)

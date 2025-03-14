@@ -1,6 +1,5 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
-import os
+
 ctk.set_appearance_mode("dark")
 
 class TeamFrame(ctk.CTkFrame):

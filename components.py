@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from PIL import Image, ImageTk
+import os
 ctk.set_appearance_mode("dark")
 
 class TeamFrame(ctk.CTkFrame):
@@ -8,16 +10,28 @@ class TeamFrame(ctk.CTkFrame):
 
         if title == "Red":
             self.color = "#591717"
+            self.text_color = "red" # looked cute, might change later
+            self.font_style = ("Arial", 20, "bold")
         else:
             self.color = "#0e450e"
+            self.text_color = "green" # am i ugly?
+            self.font_style = ("Arial", 20, "bold")
         
         self.configure(fg_color = self.color, corner_radius=0)
         self.title = title
         self.bg_color = title
         self.master = master
 
-        self.title = ctk.CTkLabel(self, text=self.title, corner_radius=6, font=("default",40))
-        self.title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew", columnspan=3)
+        self.title_label = ctk.CTkLabel(
+            self, 
+            text=self.title.upper(),  
+            font=self.font_style,
+            text_color = self.text_color,
+            anchor="center",  
+            padx=20,  
+            pady=10
+        )
+        self.title_label.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew", columnspan=3)
 
         self.widgets = []
         for i in range(15):
@@ -88,6 +102,10 @@ class PortPopup(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # have to delay the icon change due to CTk Top Level bug
+        self.after(250, lambda :self.iconbitmap("settings.ico"))
+        self.title("Settings")
+
         self.inputs = {
         "udp_ip": "127.0.0.1",
         "broadcastPort": 7500,
@@ -105,10 +123,26 @@ class PortPopup(ctk.CTkToplevel):
 
             self.entries[key] = entry
 
-        okButton = ctk.CTkButton(self, text = "Ok", command=self.submit)
+        okButton = ctk.CTkButton(
+            self, 
+            text = "Ok", 
+            command=self.submit,
+            fg_color = "gray",
+            hover_color = "black",
+            text_color = "white",
+            corner_radius = 0
+        )
         okButton.grid(row=3, column=0, padx=(5,0), pady=5)
 
-        cancelButton = ctk.CTkButton(self, text = "Cancel", command=self.cancel)
+        cancelButton = ctk.CTkButton(
+            self, 
+            text = "Cancel", 
+            command=self.cancel,
+            fg_color = "gray",
+            hover_color = "black",
+            text_color = "white",
+            corner_radius = 0
+        )
         cancelButton.grid(row=3, column=1, padx=(5,0), pady=5)
 
     def submit(self):
@@ -186,6 +220,9 @@ class LeaderBoardSlot(ctk.CTkFrame):
             self.color = "#591717"
         else:
             self.color  = "#0e450e"
+
+        # individual = {"Team":"leaderboard_ptr","Codename":"name","Slot":slot_ptr}
+        # players = {"ID":{}}
 
         self.player = ctk.CTkLabel(self,text = "",width=200,fg_color=self.color)
         self.player.grid(row=0,column=0)

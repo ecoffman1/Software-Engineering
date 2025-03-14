@@ -68,6 +68,10 @@ class CountDown(ctk.CTkToplevel):
 class PlayerEntry(ctk.CTk):
     def __init__(self, master, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.iconbitmap("icon.ico")
+        self.title("Photon")
+
         self.main = master
         self.bind("<F5>",self.startGame)
         self.bind("<F12>",self.clear)
@@ -90,13 +94,37 @@ class PlayerEntry(ctk.CTk):
         self.buttonFrame.grid(row=1,column=0,columnspan=2,sticky="nsew")
         self.buttonFrame.grid_columnconfigure((0, 1, 2), weight=1)
         # Create and place the button
-        self.button = ctk.CTkButton(self.buttonFrame, text="Change UDP Port", command=self.updatePort)
+        self.button = ctk.CTkButton(
+            self.buttonFrame, 
+            text="Change UDP Port", 
+            command=self.updatePort,
+            fg_color = "gray",
+            hover_color = "black",
+            text_color = "white",
+            corner_radius = 0
+        )
         self.button.grid(row=1, column=0, pady=10, padx=10, sticky="ew")
 
-        self.start = ctk.CTkButton(self.buttonFrame, text="F5 Start Game", command=self.startGame)
+        self.start = ctk.CTkButton(
+            self.buttonFrame, 
+            text="F5 Start Game", 
+            command=self.startGame,
+            fg_color = "gray",
+            hover_color = "black",
+            text_color = "white",
+            corner_radius = 0
+        )
         self.start.grid(row=1, column=1, pady=10, padx=10,sticky="ew")
 
-        self.clearButton = ctk.CTkButton(self.buttonFrame, text="F12 Clear Players", command=self.clear)
+        self.clearButton = ctk.CTkButton(
+            self.buttonFrame, 
+            text="F12 Clear Players", 
+            command=self.clear,
+            fg_color = "gray",
+            hover_color = "black",
+            text_color = "white",
+            corner_radius = 0
+        )
         self.clearButton.grid(row=1, column=2, pady=10, padx=10, sticky="ew")
 
         # Initialize ResourceLoader and load the config file path
@@ -217,6 +245,8 @@ class PlayerEntry(ctk.CTk):
 class PlayAction(ctk.CTkToplevel):
     def __init__(self,data, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.after(250, lambda :self.iconbitmap("icon.ico"))
+        self.title("Game Window")
         center_window(self)
         self.columnconfigure(1,weight=1)
 

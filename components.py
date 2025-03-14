@@ -178,16 +178,13 @@ class PortPopup(ctk.CTkToplevel):
         return self.inputs
     
 class TeamLeaderBoard(ctk.CTkFrame):
-    def __init__(self, master, color,codeNames):
+    def __init__(self, master, color, codeNames):
         super().__init__(master)
         
         self.team = color
         self.players = {}
         self.slots = []
         numPlayerSlots = 16
-
-        for id in codeNames:
-            self.players[codeNames[id]] = 0
 
         if color == "Red":
             displayColor = "#591717"
@@ -208,30 +205,37 @@ class TeamLeaderBoard(ctk.CTkFrame):
             slot.grid(row=i+2,column=0)
             self.slots.append(slot)
         
-        for i, codename in enumerate(self.players):
-            self.slots[i].enterPlayer(codename)
+        for i, (player_id, codename) in enumerate(codeNames.items()):
+            self.slots[i].enterPlayer(player_id, codename)
+            self.players[player_id] = self.slots[i]
 
 class LeaderBoardSlot(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, player_id = None):
         super().__init__(master)
+
+        self.player_id = player_id
+        self.score = 0
 
         if self.master.team == "Red":
             self.color = "#591717"
         else:
             self.color  = "#0e450e"
 
-        # individual = {"Team":"leaderboard_ptr","Codename":"name","Slot":slot_ptr}
-        # players = {"ID":{}}
-
         self.player = ctk.CTkLabel(self,text = "",width=200,fg_color=self.color)
         self.player.grid(row=0,column=0)
 
-        self.score = ctk.CTkLabel(self,text="",width=100,fg_color=self.color)
-        self.score.grid(row=0,column=1)
+        self.scoreLabel = ctk.CTkLabel(self,text="",width=100,fg_color=self.color)
+        self.scoreLabel.grid(row=0,column=1)
 
-    def enterPlayer(self,codename):
+    def enterPlayer(self, player_id, codename):
+        self.player_id = player_id
         self.player.configure(text=codename)
-        self.score.configure(text=0)
+        self.scoreLabel.configure(text=0)
+
+    def updateScore(self):
+        # TO DO: complete score system
+        self.score += 1
+        self.scoreLabel.configure(text = str(self.score))
 
 class ActionLog(ctk.CTkFrame):
     def __init__(self, master):

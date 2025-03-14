@@ -157,13 +157,18 @@ class PortPopup(ctk.CTkToplevel):
         self.destroy()
 
     def keyNeedInt(key):
+        print(key)
         if(key == "broadcastPort" or key == "receievePort"):
             return True
+        return False
 
     def update(self):
         for key in self.entries:
             value = self.entries[key].get()
+            if(value == ""):
+                continue
             needInt = PortPopup.keyNeedInt(key)
+
             if(needInt and not value.isnumeric()):
                 #maybe replace later with popup
                 print("port numbers must be numbers!")
@@ -173,8 +178,7 @@ class PortPopup(ctk.CTkToplevel):
             if(needInt):
                 value = int(value)
 
-            if(value != ""):
-                self.inputs[key] = value
+            self.inputs[key] = value
 
         return False
     def get_input(self):
@@ -237,7 +241,7 @@ class LeaderBoardSlot(ctk.CTkFrame):
         self.scoreLabel.configure(text=0)
 
     def updateScore(self):
-        # TO DO: complete score system
+        # TODO: complete score system
         self.score += 1
         self.scoreLabel.configure(text = str(self.score))
 
@@ -290,18 +294,3 @@ class GameTimer(ctk.CTkFrame):
 
     def clicked(self):
         self.master.destroy()
-
-        
-
-    
-
-
-
-
-
-
-
-
-
-
-

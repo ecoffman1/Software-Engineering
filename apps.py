@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import os
 from PIL import Image
 from UDP.changeSettings import changeSettings
 from UDP.UDP_Client import broadcastEquipmentId, broadcastEndGame,broadcastStartGame
@@ -8,6 +9,8 @@ from components import *
 
 ctk.set_appearance_mode("dark")
 
+image_path = os.path.dirname(os.path.abspath(__file__))
+icon_path = os.path.join(image_path, "icon.xbm")
 
 def center_window(window):
     window.update_idletasks()
@@ -69,7 +72,8 @@ class PlayerEntry(ctk.CTk):
     def __init__(self, master, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.iconbitmap("icon.ico")
+
+        self.iconbitmap(f"@{icon_path}")
         self.title("Photon")
 
         self.main = master
@@ -245,7 +249,7 @@ class PlayerEntry(ctk.CTk):
 class PlayAction(ctk.CTkToplevel):
     def __init__(self,data, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.after(250, lambda :self.iconbitmap("icon.ico"))
+        self.after(250, lambda :self.iconbitmap(f"@{icon_path}"))
         self.title("Game Window")
         center_window(self)
         self.columnconfigure(1,weight=1)

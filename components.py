@@ -1,6 +1,10 @@
 import customtkinter as ctk
+import os
 
 ctk.set_appearance_mode("dark")
+
+image_path = os.path.dirname(os.path.abspath(__file__))
+settings_path = os.path.join(image_path, "settings.xbm")
 
 class TeamFrame(ctk.CTkFrame):
     def __init__(self, master, title):
@@ -102,7 +106,7 @@ class PortPopup(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
 
         # have to delay the icon change due to CTk Top Level bug
-        self.after(250, lambda :self.iconbitmap("settings.ico"))
+        self.after(250, lambda :self.iconbitmap(f"@{settings_path}"))
         self.title("Settings")
 
         self.inputs = {

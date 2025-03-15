@@ -194,6 +194,9 @@ class TeamLeaderBoard(ctk.CTkFrame):
         self.slots = []
         numPlayerSlots = 16
 
+        for id in codeNames:
+            self.players[codeNames[id]] = 0
+
         if color == "Red":
             displayColor = "#591717"
         else:
@@ -213,15 +216,13 @@ class TeamLeaderBoard(ctk.CTkFrame):
             slot.grid(row=i+2,column=0)
             self.slots.append(slot)
         
-        for i, (player_id, codename) in enumerate(codeNames.items()):
-            self.slots[i].enterPlayer(player_id, codename)
-            self.players[player_id] = self.slots[i]
+        for i, codename in enumerate(self.players):
+            self.slots[i].enterPlayer(codename)
 
 class LeaderBoardSlot(ctk.CTkFrame):
-    def __init__(self, master, player_id = None):
+    def __init__(self, master):
         super().__init__(master)
 
-        self.player_id = player_id
         self.score = 0
 
         if self.master.team == "Red":
@@ -235,8 +236,7 @@ class LeaderBoardSlot(ctk.CTkFrame):
         self.scoreLabel = ctk.CTkLabel(self,text="",width=100,fg_color=self.color)
         self.scoreLabel.grid(row=0,column=1)
 
-    def enterPlayer(self, player_id, codename):
-        self.player_id = player_id
+    def enterPlayer(self, codename):
         self.player.configure(text=codename)
         self.scoreLabel.configure(text=0)
 

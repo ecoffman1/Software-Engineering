@@ -13,7 +13,7 @@ Main software for Photon Laser Tag
 ## For Graders
 To run a release of the Photon Laser Tag software from GitHub:
 
-1. **Navigate to the Releases page** on the [Photon Laser Tag GitHub repository](hhttps://github.com/ecoffman1/Software-Engineering/releases).
+1. **Navigate to the Releases page** on the [Photon Laser Tag GitHub repository](https://github.com/ecoffman1/Software-Engineering/releases).
 
 2. **Download the latest release**:
    - Find the latest version and download the `.exe` file.

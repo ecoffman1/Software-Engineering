@@ -6,7 +6,9 @@ data = [
 		('countdown_images/*', 'countdown_images'),
 		('photon_tracks/*', 'photon_tracks'),
 		('game sounds/*', 'game sounds'),
-		('logo.jpg', '.')
+		('logo.jpg', '.'),
+        ('icon.xbm', '.'),
+        ('settings.xbm', '.')
     ]
 
 a = Analysis(

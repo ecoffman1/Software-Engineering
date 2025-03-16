@@ -15,11 +15,7 @@ Main software for Photon Laser Tag
 1. **Install required system packages** (for Debian-based systems):
 
     ```bash
-    sudo apt-get install python3-pip
-    sudo apt-get install python3-venv
-    sudo apt-get install python3-tk
-    sudo apt-get install python3-dev
-    sudo apt-get install libpq-dev
+    ./dev_setup.bash
     ```
 
 2. **Create a virtual environment:**

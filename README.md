@@ -52,4 +52,4 @@ To start the program in venv:
 python3 main.py
 ```
 
-To start the program after being built navigate to dist/ui and use ./ui (on the executable)
+To start the program after being built navigate to /dist and use ./Photon (on the executable)

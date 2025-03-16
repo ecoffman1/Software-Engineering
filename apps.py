@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import os
+import random
 from PIL import Image
 from UDP.changeSettings import changeSettings
 from UDP.UDP_Client import broadcastEquipmentId, broadcastEndGame,broadcastStartGame
@@ -245,6 +246,15 @@ class PlayerEntry(ctk.CTk):
     
     def startGame(self, *args):
         self.main.switchPlayAction()
+
+    def random_music():
+     folder_path = 'photon_tracks'
+     
+     tracks = [f for f in os.listdir(folder_path) if f.startswith('Track') and f.endswith('.mp3')]
+     selected_track = random.choice(tracks)
+
+     #play music
+     print(f'Selected track: {selected_track}')
 
 class PlayAction(ctk.CTkToplevel):
     def __init__(self,data, *args, **kwargs):

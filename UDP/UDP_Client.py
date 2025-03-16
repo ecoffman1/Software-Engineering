@@ -14,7 +14,6 @@ with open(config_path, "r") as config_file:
     # read contents and parse as a python dict
     config = json.load(config_file)
 
-# get ip address and port from dictionary
 udp_ip = config["udp_ip"]
 broadcastPort = config["broadcastPort"]
 serverPort = config["receivePort"]
@@ -61,5 +60,24 @@ def broadcastEndGame():
     for i in range(3):
         UDPClientSocket.sendto(endCode.encode(), (udp_ip, broadcastPort))
         print(f"Code {endCode} sent to: {udp_ip}:{broadcastPort}")
+
+def updateClientSettings(inputs):
+    # Update global variables based on the new inputs
+    global udp_ip, broadcastPort, serverPort
+
+    # Set the values
+    for setting, newValue in inputs.items():
+        if setting == "udp_ip":
+            udp_ip = newValue
+            print(udp_ip)
+        elif setting == "broadcastPort":
+            broadcastPort = newValue
+        elif setting == "receivePort":
+            serverPort = newValue
+        else:
+            print(f"Unknown setting: {setting}")
+    
+
+
 
     

@@ -50,4 +50,4 @@ def updateServerSettings(inputs):
         elif setting == "receivePort":
             receivePort = newValue
 
-server()
+# server()

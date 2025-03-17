@@ -39,4 +39,15 @@ def server():
     finally:
         sock.close()
 
+def updateServerSettings(inputs):
+    # Update global variables based on the new inputs
+    global udp_ip, receivePort
+
+    # Set the values
+    for setting, newValue in inputs.items():
+        if setting == "udp_ip":
+            udp_ip = newValue
+        elif setting == "receivePort":
+            receivePort = newValue
+
 server()

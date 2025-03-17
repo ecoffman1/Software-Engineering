@@ -10,6 +10,27 @@ Main software for Photon Laser Tag
 | funcRandy     | Randall Wade       |
 | nickjachim    | Nicholas Jachim    |
 
+## For Graders
+To run a release of the Photon Laser Tag software from GitHub:
+
+1. **Navigate to the Releases page** on the [Photon Laser Tag GitHub repository](https://github.com/ecoffman1/Software-Engineering/releases).
+
+2. **Download the latest release**:
+   - Find the latest version and download the `.exe` file.
+
+3. **Make the file executable** (for Linux):
+   - After downloading the `.exe` named "Photon", navigate to the folder containing it in your terminal.
+
+   ```bash
+   chmod +x Photon
+   ```
+
+4. **Run the exe**:
+    ```bash
+    ./Photon
+    ```
+
+
 ## Install Requirements
 
 1. **Install required system packages** (for Debian-based systems):

@@ -1,5 +1,7 @@
 import json
 import os
+from UDP.UDP_Client import updateClientSettings
+from UDP.UDP_Server import updateServerSettings
 
 # call me when the button is pressed to change json configuration file
 # setting is name of setting (ex: "udp_ip")
@@ -29,4 +31,8 @@ def changeSettings(newValues):
         print("Error: config.json not found!")
     except json.JSONDecodeError:
         print("Error: Invalid JSON format in config.json!")
+    
+    # Update new settings
+    updateServerSettings(newValues)
+    updateClientSettings(newValues)
 

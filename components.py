@@ -1,5 +1,7 @@
 import customtkinter as ctk
+import re
 import os
+from UDP.getSettings import getSettings
 
 ctk.set_appearance_mode("dark")
 
@@ -109,7 +111,8 @@ class PortPopup(ctk.CTkToplevel):
         self.after(250, lambda :self.iconbitmap(f"@{settings_path}"))
         self.title("Settings")
 
-        self.inputs = {
+        settings = getSettings()
+        self.inputs = settings if settings else {
         "udp_ip": "127.0.0.1",
         "broadcastPort": 7500,
         "receivePort": 7501,
@@ -123,6 +126,11 @@ class PortPopup(ctk.CTkToplevel):
 
             entry = ctk.CTkEntry(self,width = 100, height=30,placeholder_text=label,corner_radius=0, fg_color="White", text_color="Black")
             entry.grid(row=i, column=1,padx=(5,0), pady=5)
+            
+            if isinstance(label, int):
+                entry.insert(0, label)
+            else:
+                entry.insert(0, str(label))
 
             self.entries[key] = entry
 
@@ -158,9 +166,15 @@ class PortPopup(ctk.CTkToplevel):
 
     def keyNeedInt(key):
         print(key)
-        if(key == "broadcastPort" or key == "receievePort"):
+        if(key == "broadcastPort" or key == "receivePort"):
             return True
         return False
+    
+    def validate_ip(ip):
+        pattern = r"^(?:\d{1,3}\.){3}\d{1,3}$"
+        if not re.match(pattern, ip):
+            return False
+        return all(0 <= int(octet) <= 255 for octet in ip.split("."))
 
     def update(self):
         for key in self.entries:
@@ -177,6 +191,12 @@ class PortPopup(ctk.CTkToplevel):
 
             if(needInt):
                 value = int(value)
+
+            if key == "udp_ip":
+                if not PortPopup.validate_ip(value):
+                    print("Invalid IP address format")
+                    self.cancel()
+                    return
 
             self.inputs[key] = value
 

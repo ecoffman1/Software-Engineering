@@ -33,6 +33,6 @@ def changeSettings(newValues):
         print("Error: Invalid JSON format in config.json!")
     
     # Update new settings
-    # updateServerSettings(newValues)
+    updateServerSettings(newValues)
     updateClientSettings(newValues)
 

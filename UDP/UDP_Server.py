@@ -49,5 +49,3 @@ def updateServerSettings(inputs):
             udp_ip = newValue
         elif setting == "receivePort":
             receivePort = newValue
-
-server()

@@ -4,9 +4,11 @@ import random
 from PIL import Image
 from UDP.changeSettings import changeSettings
 from UDP.UDP_Client import broadcastEquipmentId, broadcastEndGame,broadcastStartGame
+from UDP.UDP_Server import server
 from database import Database
 from resource_loader import ResourceLoader
 from components import *
+import subprocess
 
 ctk.set_appearance_mode("dark")
 
@@ -283,6 +285,7 @@ class PlayAction(ctk.CTkToplevel):
 
     def startGame(self):
         broadcastStartGame()
+        server()
         self.timer.count()
 
         self.actionLog.after(5000,lambda: self.actionLog.update("first"))
@@ -293,4 +296,12 @@ class PlayAction(ctk.CTkToplevel):
         broadcastEndGame()
 
 
+
+class TrafficGeneratorHandler(ctk.CTkTopLevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
+        # TODO: after start game is pressed, before countdown timer starts
+        # create a popup with button to confirm traffic generator has input
+        
+        subprocess.Popen(["python", "udp_files/python_trafficgenarator_v2.py"])

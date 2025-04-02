@@ -12,6 +12,8 @@ class Main():
 
     def switchPlayAction(self):
         self.app.withdraw()
+        traffic = TrafficGeneratorHandler(self.app)
+        traffic.wait_window()
         count = CountDown()
         data = self.createPlayerData()
         self.window = PlayAction(data)

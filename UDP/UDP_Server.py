@@ -1,6 +1,7 @@
 import socket
 import json
 import os
+from UDP.UDP_Client import client
 
 # Get the path to config.json
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -32,12 +33,10 @@ def server():
             data, address = sock.recvfrom(1024)
             print(f"Received message from {address}: {data.decode()}")
 
-            # reply to the client
-            sock.sendto(serverMessage.encode(), address)
+            # reply to the traffic generator
+            client(data.decode())
     except Exception as e:
         print(f"Error occurred: {e}")
-    finally:
-        sock.close()
 
 def updateServerSettings(inputs):
     # Update global variables based on the new inputs

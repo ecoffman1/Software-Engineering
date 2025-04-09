@@ -294,26 +294,3 @@ class PlayAction(ctk.CTkToplevel):
 
     def endGame(self):
         broadcastEndGame()
-
-
-
-class TrafficGeneratorHandler(ctk.CTkToplevel):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.title("Traffic Generator Ready")
-        self.geometry("300x150")
-        
-        self.label = ctk.CTkLabel(self, text="Traffic Generator has necessary data.", font=("Arial", 14))
-        self.label.pack(pady=20)
-        
-        self.confirm_button = ctk.CTkButton(self, text="Confirm", command=self.on_confirm)
-        self.confirm_button.pack(pady=10)
-                
-    def on_confirm(self):
-        self.destroy()
-        
-        # TODO: after start game is pressed, before countdown timer starts
-        # create a popup with button to confirm traffic generator has input
-
-    def initializeTrafficGenerator(self):
-        subprocess.Popen(["python", "udp_files/python_trafficgenarator_v2.py"])

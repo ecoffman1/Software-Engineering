@@ -26,22 +26,10 @@ def client(message):
     print(f"Message: {message}")
 
     # send message to the server
-    UDPClientSocket.sendto(message.encode(), (udp_ip, serverPort))
+    UDPClientSocket.sendto(message.encode(), (udp_ip, broadcastPort))
 
     print(f"Message sent to: {udp_ip}:{broadcastPort}")
 
-
-    # Wait for server reply
-    try:
-        response = UDPClientSocket.recvfrom(1024)
-        # response from server
-        print(f"Response: {response[0]}")
-    except socket.timeout:
-        print("Timeout: No response")
-    except socket.error as e:
-        print(f"Socket error: {e}")
-    except Exception as e:
-        print(f"An unexpected error occured: {e}")
 
 def broadcastEquipmentId(equipmentId):
     print(f"Equipment id: {equipmentId}")

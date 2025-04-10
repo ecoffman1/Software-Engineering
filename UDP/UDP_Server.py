@@ -31,10 +31,14 @@ def server():
             # message received is a tuple: {data, addr}
             # 1024 specifies max size in bytes
             data, address = sock.recvfrom(1024)
-            print(f"Received message from {address}: {data.decode()}")
+            message = data.decode()
+            print(f"Received message from {address}: {message}")
 
-            # reply to the traffic generator
-            client(data.decode())
+            # reply to the traffic generator only the player that got hit
+            parts = message.strip().split(":")
+            playerTagged = parts[1]
+            client(playerTagged)
+            
     except Exception as e:
         print(f"Error occurred: {e}")
 

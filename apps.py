@@ -8,7 +8,6 @@ from UDP.UDP_Server import server
 from database import Database
 from resource_loader import ResourceLoader
 from components import *
-import subprocess
 
 ctk.set_appearance_mode("dark")
 
@@ -69,8 +68,6 @@ class CountDown(ctk.CTkToplevel):
             self.counter.configure(image=counter_photo)
             self.after(1000,self.count)
             
-
-
 class PlayerEntry(ctk.CTk):
     def __init__(self, master, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -285,8 +282,9 @@ class PlayAction(ctk.CTkToplevel):
 
     def startGame(self):
         broadcastStartGame()
-        server()
         self.timer.count()
+        server()
+        
 
         self.actionLog.after(5000,lambda: self.actionLog.update("first"))
         self.actionLog.after(10000,lambda: self.actionLog.update("second"))

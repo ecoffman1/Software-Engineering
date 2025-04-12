@@ -15,11 +15,11 @@ class TeamFrame(ctk.CTkFrame):
 
         if title == "Red":
             self.color = "#591717"
-            self.text_color = "red" # looked cute, might change later
+            self.text_color = "White"
             self.font_style = ("Arial", 20, "bold")
         else:
             self.color = "#0e450e"
-            self.text_color = "green" # am i ugly?
+            self.text_color = "White"
             self.font_style = ("Arial", 20, "bold")
         
         self.configure(fg_color = self.color, corner_radius=0)
@@ -99,9 +99,6 @@ class TeamFrame(ctk.CTkFrame):
     def clear(self):
         for i in range(len(self.widgets)):
             self.clearRow(i)
-            
-
-
 
 class PortPopup(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):

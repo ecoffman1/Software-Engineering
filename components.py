@@ -208,6 +208,7 @@ class TeamLeaderBoard(ctk.CTkFrame):
         
         self.team = color
         self.players = {}
+        self.playerMapping = {}
         self.slots = []
         numPlayerSlots = 16
 
@@ -233,8 +234,10 @@ class TeamLeaderBoard(ctk.CTkFrame):
             slot.grid(row=i+2,column=0)
             self.slots.append(slot)
         
-        for i, codename in enumerate(self.players):
+        for i, (equipment_id, codename) in enumerate(codeNames.items()):
+            self.players[codename] = 0
             self.slots[i].enterPlayer(codename)
+            self.playerMapping[equipment_id] = self.slots[i]
 
 class LeaderBoardSlot(ctk.CTkFrame):
     def __init__(self, master):
@@ -254,13 +257,26 @@ class LeaderBoardSlot(ctk.CTkFrame):
         self.scoreLabel.grid(row=0,column=1)
 
     def enterPlayer(self, codename):
+        self.score = 0
         self.player.configure(text=codename)
-        self.scoreLabel.configure(text=0)
+        self.scoreLabel.configure(text=str(self.score))
 
     def updateScore(self):
-        # TODO: complete score system
-        self.score += 1
+
+        self.score += 10
+        print(f"Updating Score to {self.score}")
         self.scoreLabel.configure(text = str(self.score))
+        self.scoreLabel.update_idletasks()
+
+    def getCodename(self):
+        name = self.player.cget("text")
+        return name[2:] if name.startswith("🅱 ") else name
+    
+    def addBaseHitMarker(self):
+        name = self.player.cget("text")
+        if not name.startswith("🅱"):
+            self.player.configure(text="🅱 " + name)
+
 
 class ActionLog(ctk.CTkFrame):
     def __init__(self, master):
@@ -274,7 +290,7 @@ class ActionLog(ctk.CTkFrame):
 
         for i in range (eventLimit):
             line = ctk.CTkLabel(self,text="",width = 300, fg_color="Black")
-            line.grid(row=eventLimit-i,column=0)
+            line.grid(row=i, column=0, sticky="w", padx=10, pady=1)
             self.lines.append(line)
 
     def update(self, message):
@@ -283,6 +299,8 @@ class ActionLog(ctk.CTkFrame):
 
         for i in range(len(self.lines)):
             self.lines[i].configure(text=self.events[i])
+        
+        self.update_idletasks()
 
 class GameTimer(ctk.CTkFrame):
     def __init__(self, master):

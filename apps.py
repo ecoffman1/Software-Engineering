@@ -43,7 +43,7 @@ class CountDown(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.overrideredirect(True)
         loader = ResourceLoader()
-        self.countNum = 30
+        self.countNum = 1
         background_image = loader.load_image("countdown_images/background.tif")
         background_photo = ctk.CTkImage(background_image, size=(background_image.width,background_image.height))
         self.background = ctk.CTkLabel(self,text = "", image=background_photo)
@@ -283,8 +283,7 @@ class PlayAction(ctk.CTkToplevel):
     def startGame(self):
         broadcastStartGame()
         self.timer.count()
-        server()
-        
+        server(lambda shooter, hit: self.updateScoreboard(shooter, hit))
 
         self.actionLog.after(5000,lambda: self.actionLog.update("first"))
         self.actionLog.after(10000,lambda: self.actionLog.update("second"))
@@ -292,3 +291,45 @@ class PlayAction(ctk.CTkToplevel):
 
     def endGame(self):
         broadcastEndGame()
+                
+    def updateScoreboard(self, shooter_id, hit_id):
+        print(f"Score event: {shooter_id} hit {hit_id}")
+
+        if hit_id == "53":
+            slot = self.greenLeaderBoard.playerMapping.get(shooter_id)
+            if slot:
+                slot.score += 100
+                slot.scoreLabel.configure(text=str(slot.score))
+                slot.addBaseHitMarker()
+                self.actionLog.update(f"{slot.getCodename()} hit the RED BASE!")
+                return
+
+        if hit_id == "43":
+            slot = self.redLeaderBoard.playerMapping.get(shooter_id)
+            if slot:
+                slot.score += 100
+                slot.scoreLabel.configure(text=str(slot.score))
+                slot.addBaseHitMarker()
+                self.actionLog.update(f"{slot.getCodename()} hit the GREEN BASE!")
+                return
+
+        slot = self.redLeaderBoard.playerMapping.get(shooter_id)
+        if not slot:
+            slot = self.greenLeaderBoard.playerMapping.get(shooter_id)
+
+        if slot:
+            # print(f"[DEBUG] Found shooter {shooter_id}")
+            slot.updateScore()
+
+            shooterName = slot.getCodename()
+
+            hitSlot = self.redLeaderBoard.playerMapping.get(hit_id) or self.greenLeaderBoard.playerMapping.get(hit_id)
+            hitName = hitSlot.getCodename() if hitSlot else hit_id
+
+            log_message = f"{shooterName} hit {hitName}"
+            self.actionLog.update(log_message)
+
+        else:
+            # print(f"[DEBUG] No slot found for shooter_id: {shooter_id}")
+            return
+

@@ -14,7 +14,7 @@ udp_ip = config["udp_ip"]
 receivePort = config["receivePort"]
 serverMessage = "Hello client, I'm the server!"
 
-def server():
+def server(callback = None):
 
     # create a udp socket for receiving
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -36,8 +36,12 @@ def server():
 
             # reply to the traffic generator only the player that got hit
             parts = message.strip().split(":")
-            playerTagged = parts[1]
-            client(playerTagged)
+            shooter_id = parts[0]
+            hit_id = parts[1]
+            client(hit_id)
+            
+            if callback:
+                callback(shooter_id.strip(), hit_id.strip())
             
     except Exception as e:
         print(f"Error occurred: {e}")

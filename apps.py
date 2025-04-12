@@ -298,8 +298,8 @@ class PlayAction(ctk.CTkToplevel):
         if hit_id == "53":
             slot = self.greenLeaderBoard.playerMapping.get(shooter_id)
             if slot:
-                slot.score += 100
-                slot.scoreLabel.configure(text=str(slot.score))
+                slot.updateScore(100)
+                self.greenLeaderBoard.updateTeamScore()
                 slot.addBaseHitMarker()
                 self.actionLog.update(f"{slot.getCodename()} hit the RED BASE!")
                 return
@@ -307,8 +307,8 @@ class PlayAction(ctk.CTkToplevel):
         if hit_id == "43":
             slot = self.redLeaderBoard.playerMapping.get(shooter_id)
             if slot:
-                slot.score += 100
-                slot.scoreLabel.configure(text=str(slot.score))
+                slot.updateScore(100)
+                self.redLeaderBoard.updateTeamScore()
                 slot.addBaseHitMarker()
                 self.actionLog.update(f"{slot.getCodename()} hit the GREEN BASE!")
                 return
@@ -319,7 +319,12 @@ class PlayAction(ctk.CTkToplevel):
 
         if slot:
             # print(f"[DEBUG] Found shooter {shooter_id}")
-            slot.updateScore()
+            slot.updateScore(10)
+
+            if slot in self.redLeaderBoard.playerMapping.values():
+                self.redLeaderBoard.updateTeamScore()
+            elif slot in self.greenLeaderBoard.playerMapping.values():
+                self.greenLeaderBoard.updateTeamScore()
 
             shooterName = slot.getCodename()
 

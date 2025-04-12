@@ -238,6 +238,13 @@ class TeamLeaderBoard(ctk.CTkFrame):
             self.players[codename] = 0
             self.slots[i].enterPlayer(codename)
             self.playerMapping[equipment_id] = self.slots[i]
+        
+    def updateTeamScore(self):
+        total = 0
+        for slot in self.slots:
+            total += slot.score
+        self.teamScore.score = total
+        self.teamScore.scoreLabel.configure(text=str(total))
 
 class LeaderBoardSlot(ctk.CTkFrame):
     def __init__(self, master):
@@ -261,9 +268,9 @@ class LeaderBoardSlot(ctk.CTkFrame):
         self.player.configure(text=codename)
         self.scoreLabel.configure(text=str(self.score))
 
-    def updateScore(self):
+    def updateScore(self, points):
 
-        self.score += 10
+        self.score += points
         print(f"Updating Score to {self.score}")
         self.scoreLabel.configure(text = str(self.score))
         self.scoreLabel.update_idletasks()

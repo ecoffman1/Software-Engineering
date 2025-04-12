@@ -8,6 +8,8 @@ from UDP.UDP_Server import server
 from database import Database
 from resource_loader import ResourceLoader
 from components import *
+import threading
+from time import sleep
 
 ctk.set_appearance_mode("dark")
 
@@ -281,9 +283,11 @@ class PlayAction(ctk.CTkToplevel):
         self.startGame()
 
     def startGame(self):
+        threading.Thread(target=server, args=(self.updateScoreboard,), daemon=True).start()
+        sleep(0.5)
         broadcastStartGame()
         self.timer.count()
-        server(lambda shooter, hit: self.updateScoreboard(shooter, hit))
+
 
         self.actionLog.after(5000,lambda: self.actionLog.update("first"))
         self.actionLog.after(10000,lambda: self.actionLog.update("second"))

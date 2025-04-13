@@ -246,6 +246,17 @@ class TeamLeaderBoard(ctk.CTkFrame):
         self.teamScore.score = total
         self.teamScore.scoreLabel.configure(text=str(total))
 
+    def sortSlots(self):
+        self.slots.sort(key=lambda slot: slot.score, reverse=True)
+
+        for i, slot in enumerate(self.slots):
+            # remove old layout
+            slot.grid_forget()
+            # redraw
+            slot.grid(row=i+2, column=0)
+
+        self.update_idletasks()
+
 class LeaderBoardSlot(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -313,6 +324,7 @@ class GameTimer(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
+        self.flash = True
         self.seconds = 6*60
         self.configure(fg_color="Black")
 
@@ -320,18 +332,59 @@ class GameTimer(ctk.CTkFrame):
         self.counter.place(relx=.5,rely=.5,anchor=ctk.CENTER)
 
     def count(self):
-        if(self.seconds<0):
+        if self.seconds < 0:
             self.convertTimer()
             self.master.endGame()
             return
-        mins,secs = divmod(self.seconds,60)
+
+        mins, secs = divmod(self.seconds, 60)
         self.seconds -= 1
         self.counter.configure(text='{:01d}:{:02d}'.format(mins, secs))
-        self.after(1000,self.count)
+
+        self.flashLeadingTeam()
+
+        self.after(1000, self.count)
+
+    def flashLeadingTeam(self):
+        red = self.master.redLeaderBoard.teamScore.score
+        green = self.master.greenLeaderBoard.teamScore.score
+
+        self.flash = not self.flash
+        flashColor = "yellow" if self.flash else "white"
+
+        if red > green:
+            self.master.redLeaderBoard.teamScore.scoreLabel.configure(text_color=flashColor)
+            self.master.redLeaderBoard.teamScore.player.configure(text_color=flashColor)
+
+            self.master.greenLeaderBoard.teamScore.scoreLabel.configure(text_color="white")
+            self.master.greenLeaderBoard.teamScore.player.configure(text_color="white")
+
+        elif green > red:
+            self.master.greenLeaderBoard.teamScore.scoreLabel.configure(text_color=flashColor)
+            self.master.greenLeaderBoard.teamScore.player.configure(text_color=flashColor)
+
+            self.master.redLeaderBoard.teamScore.scoreLabel.configure(text_color="white")
+            self.master.redLeaderBoard.teamScore.player.configure(text_color="white")
+
+        else:
+            self.master.redLeaderBoard.teamScore.scoreLabel.configure(text_color="white")
+            self.master.redLeaderBoard.teamScore.player.configure(text_color="white")
+            self.master.greenLeaderBoard.teamScore.scoreLabel.configure(text_color="white")
+            self.master.greenLeaderBoard.teamScore.player.configure(text_color="white")
+
 
     def convertTimer(self):
         self.counter.destroy()
-        button = ctk.CTkButton(self,text="Return to Player Entry", command=self.clicked)
+        button = ctk.CTkButton(
+            self,
+            text="Return to Player Entry",
+            command=self.clicked,
+            fg_color="gray",
+            hover_color="black",
+            text_color="white",
+            corner_radius=0
+        )
+
         button.place(relx=.5,rely=.5,anchor=ctk.CENTER)
 
     def clicked(self):

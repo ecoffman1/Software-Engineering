@@ -322,21 +322,32 @@ class PlayAction(ctk.CTkToplevel):
             slot = self.greenLeaderBoard.playerMapping.get(shooter_id)
 
         if slot:
-            # print(f"[DEBUG] Found shooter {shooter_id}")
-            slot.updateScore(10)
+                        # print(f"[DEBUG] Found shooter {shooter_id}")
+            
+            hitSlot = self.redLeaderBoard.playerMapping.get(hit_id) or self.greenLeaderBoard.playerMapping.get(hit_id)
+
+            friendlyFire = hitSlot and (
+                (slot in self.redLeaderBoard.playerMapping.values() and hitSlot in self.redLeaderBoard.playerMapping.values()) or
+                (slot in self.greenLeaderBoard.playerMapping.values() and hitSlot in self.greenLeaderBoard.playerMapping.values())
+            )
+
+            if friendlyFire:
+                slot.updateScore(-10)
+                log_message = f"{slot.getCodename()} hit a teammate! -10 points"
+            else:
+                slot.updateScore(10)
+                hitName = hitSlot.getCodename() if hitSlot else hit_id
+                log_message = f"{slot.getCodename()} hit {hitName}"
 
             if slot in self.redLeaderBoard.playerMapping.values():
                 self.redLeaderBoard.updateTeamScore()
+                self.redLeaderBoard.sortSlots()
             elif slot in self.greenLeaderBoard.playerMapping.values():
                 self.greenLeaderBoard.updateTeamScore()
+                self.greenLeaderBoard.sortSlots()
 
-            shooterName = slot.getCodename()
-
-            hitSlot = self.redLeaderBoard.playerMapping.get(hit_id) or self.greenLeaderBoard.playerMapping.get(hit_id)
-            hitName = hitSlot.getCodename() if hitSlot else hit_id
-
-            log_message = f"{shooterName} hit {hitName}"
             self.actionLog.update(log_message)
+
 
         else:
             # print(f"[DEBUG] No slot found for shooter_id: {shooter_id}")

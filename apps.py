@@ -82,9 +82,7 @@ class music:
         tracks = [f for f in os.listdir(folder_path) if f.startswith('Track') and f.endswith('.mp3')]
         selected_track = random.choice(tracks)
         track_path = os.path.join(self.folder_path, selected_track)
-
-        #play music
-        print(f'Selected track: {selected_track}')
+        #print(f'Selected track: {selected_track}')
 
         #stop any music
         pygame.mixer.music.stop()

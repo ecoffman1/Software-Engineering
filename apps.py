@@ -69,7 +69,30 @@ class CountDown(ctk.CTkToplevel):
             counter_photo = ctk.CTkImage(counter_image, size=(counter_image.width,counter_image.height))
             self.counter.configure(image=counter_photo)
             self.after(1000,self.count)
-            
+
+class music:
+    def __init__ (self):
+        self.folder_path = 'photon_tracks'
+        pygame.mixer.init()
+         
+    def random_music(self):
+        folder_path = 'photon_tracks'
+
+        tracks = [f for f in os.listdir(folder_path) if f.startswith('Track') and f.endswith('.mp3')]
+        selected_track = random.choice(tracks)
+        track_path = os.path.join(self.folder_path, selected_track)
+
+        #play music
+        print(f'Selected track: {selected_track}')
+
+        #stop any music
+        pygame.mixer.music.stop()
+
+        #load and play
+        pygame.mixer.music.load(track_path)
+        pygame.mixer.music.play()
+play = music()
+
 class PlayerEntry(ctk.CTk):
     def __init__(self, master, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -246,6 +269,7 @@ class PlayerEntry(ctk.CTk):
         self.green.clear()
     
     def startGame(self, *args):
+        play.random_music()
         self.main.switchPlayAction()
 
     def random_music():

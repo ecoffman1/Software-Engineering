@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import os
 import random
+import pygame
 from PIL import Image
 from UDP.changeSettings import changeSettings
 from UDP.UDP_Client import broadcastEquipmentId, broadcastEndGame,broadcastStartGame

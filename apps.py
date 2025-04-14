@@ -75,6 +75,9 @@ class music:
     def __init__ (self):
         self.folder_path = 'photon_tracks'
         pygame.mixer.init()
+
+    def start_music(self):
+        threading.Timer(15.0, self.random_music).start()
          
     def random_music(self):
         folder_path = 'photon_tracks'
@@ -268,7 +271,7 @@ class PlayerEntry(ctk.CTk):
         self.green.clear()
     
     def startGame(self, *args):
-        play.random_music()
+        play.start_music()
         self.main.switchPlayAction()
 
     def random_music():

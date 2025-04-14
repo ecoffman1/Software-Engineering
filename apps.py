@@ -46,7 +46,7 @@ class CountDown(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.overrideredirect(True)
         loader = ResourceLoader()
-        self.countNum = 1
+        self.countNum = 30
         background_image = loader.load_image("countdown_images/background.tif")
         background_photo = ctk.CTkImage(background_image, size=(background_image.width,background_image.height))
         self.background = ctk.CTkLabel(self,text = "", image=background_photo)
@@ -310,11 +310,6 @@ class PlayAction(ctk.CTkToplevel):
         sleep(0.5)
         broadcastStartGame()
         self.timer.count()
-
-
-        self.actionLog.after(5000,lambda: self.actionLog.update("first"))
-        self.actionLog.after(10000,lambda: self.actionLog.update("second"))
-
 
     def endGame(self):
         broadcastEndGame()

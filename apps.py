@@ -372,9 +372,10 @@ class PlayAction(ctk.CTkToplevel):
                 self.greenLeaderBoard.sortSlots()
 
             self.actionLog.update(log_message)
-
+            
+            return friendlyFire
 
         else:
             # print(f"[DEBUG] No slot found for shooter_id: {shooter_id}")
-            return
+            return False
 

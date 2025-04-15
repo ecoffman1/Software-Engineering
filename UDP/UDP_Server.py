@@ -38,10 +38,16 @@ def server(callback = None):
             parts = message.strip().split(":")
             shooter_id = parts[0]
             hit_id = parts[1]
-            client(hit_id)
+            
+            friendlyFire = False
             
             if callback:
-                callback(shooter_id.strip(), hit_id.strip())
+                friendlyFire = callback(shooter_id.strip(), hit_id.strip())
+                
+            if friendlyFire:
+                client(shooter_id)
+            else:
+                client(hit_id)
             
     except Exception as e:
         print(f"Error occurred: {e}")

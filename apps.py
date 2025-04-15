@@ -184,15 +184,6 @@ class PlayerEntry(ctk.CTk):
             return
         changeSettings(values)
 
-    def queryID(self,playerId):
-        self.db.connect()
-        codename = self.db.get_codename(playerId)
-        self.db.close()
-
-        if codename is None:
-            codename = self.askForCodename()
-
-        return codename
         
     def clearRow(self, row, color):
         if(color == "Red"):
@@ -206,6 +197,15 @@ class PlayerEntry(ctk.CTk):
         else:
             self.player_list_g[row][0] = playerID
     
+    # Find codename from given playerID, if none prompts for new codename.
+    def handleGetCodename(self,playerID):
+        self.db.connect()
+        codename = self.db.get_codename(playerID)
+        self.db.close()
+
+        return codename
+    
+    # Stores codename in player list
     def storeCodename(self,codename, color, row):
         if(color == "Red"):
             team = self.player_list_r
@@ -213,10 +213,6 @@ class PlayerEntry(ctk.CTk):
             team = self.player_list_g
             
         team[row][1] = codename
-
-        self.db.connect()
-        self.db.add_player(team[row][0], codename)
-        self.db.close()
 
         if(not team[row][2]):
             self.askForEquipmentID(color, row)
@@ -228,9 +224,15 @@ class PlayerEntry(ctk.CTk):
             self.player_list_g[row][2] = equipmentID
 
     # Handles updating codenames in the database
-    def handleUpdateCodename(self, playerId, newCodename):
+    def handleUpdateCodename(self, playerID, newCodename):
         self.db.connect()
-        self.db.update_codename(playerId, newCodename)
+        self.db.update_codename(playerID, newCodename)
+        self.db.close()
+
+    # handles adding a player to the database
+    def handleAddPlayer(self, playerID, codename):
+        self.db.connect()
+        self.db.add_player(playerID, codename)
         self.db.close()
 
     def askForCodename(self):

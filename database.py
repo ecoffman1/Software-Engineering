@@ -58,38 +58,38 @@ class Database():
             return None
     
     # Add new player into the database
-    def add_player(self, playerId, codename=None):
+    def add_player(self, playerID, codename=None):
         if codename:
             query = "INSERT INTO players (id, codename) VALUES (%s, %s)"
-            params = (playerId, codename)
+            params = (playerID, codename)
             self.execute_query(query, params)
         else:
             print("No codename provided, unable to add.")
-            
+
 
     # Update a player's codename in the database
-    def update_codename(self, playerId, codename=None):
-        # Check if the playerId exists in the db
+    def update_codename(self, playerID, codename=None):
+        # Check if the playerID exists in the db
         query = "SELECT ID FROM players WHERE ID = %s"
-        params = (playerId,)
+        params = (playerID,)
         result = self.execute_query(query, params)
         
         if result and len(result) > 0:
             if codename:
                 query = "UPDATE players SET codename = %s WHERE ID = %s"
-                params = (codename, playerId)
+                params = (codename, playerID)
                 self.execute_query(query, params)
-                print(f"Codename for player {playerId} updated to {codename}.")
+                print(f"Codename for player {playerID} updated to {codename}.")
             else:
                 print("No codename provided, unable to update.")
         else:
-            print(f"Player with ID {playerId} does not exist in the database.")
+            print(f"Player with ID {playerID} does not exist in the database.")
 
 
     # Check if codename exists, if it does, return it.
-    def get_codename(self, equipmentId):
+    def get_codename(self, playerID):
         query = "SELECT codename FROM PLAYERS WHERE ID = %s"
-        params = (equipmentId,)  # Ensure it's passed as a tuple
+        params = (playerID,)  # Ensure it's passed as a tuple
         result = self.execute_query(query, params)
         
         # If result is not None, we have to check if there are results to return

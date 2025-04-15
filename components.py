@@ -38,6 +38,7 @@ class TeamFrame(ctk.CTkFrame):
         )
         self.title_label.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew", columnspan=3)
 
+        self.currentPlayers = []
         self.widgets = []
         for i in range(15):
             row = [None, None]
@@ -47,6 +48,7 @@ class TeamFrame(ctk.CTkFrame):
             entry = ctk.CTkEntry(self,width = 100, height=30,placeholder_text="",corner_radius=0, fg_color="White", text_color="Black")
             entry.grid(row=i+1, column=1,padx=(5,0), pady=5, sticky="nw")
             entry.bind("<Return>", self.validate)
+            entry.bind("<BackSpace>", self.removePlayer)
 
             label = ctk.CTkLabel(self, width = 200, height=30, fg_color="White", text_color="Black",text="")
             label.grid(row=i+1, column=2,padx=(0,10), pady=5, sticky="ne")
@@ -58,31 +60,48 @@ class TeamFrame(ctk.CTkFrame):
     def validate(self, event):
         box = event.widget
         rowNumber = box.master.grid_info()["row"] - 1
-        id = box.get()
-        if(not id.isnumeric()):
+        playerID = box.get()
+
+        if(not playerID.isnumeric() or self.playerExists(playerID)):
             self.clearRow(rowNumber)
             self.master.clearRow(rowNumber,self.bg_color)
             return
         
-        self.master.storeID(id, self.bg_color, rowNumber)
-        response = self.master.queryID(id)
+        self.master.storeID(playerID, self.bg_color, rowNumber)
+        # Check db to see if a codename exists for this playerID
+        codename = self.master.handleGetCodename(playerID)
 
-        if(not response):
-            self.master.clearRow(rowNumber,self.bg_color)
+        if codename is None:
+            # ask for codename and add player to db
+            codename = self.master.askForCodename()
+            self.master.handleAddPlayer(playerID, codename)
+
+        self.currentPlayers.append(playerID)
+        self.setCodename(rowNumber, codename)
+        self.master.storeCodename(codename, self.bg_color, rowNumber)
+
+    def removePlayer(self, event):
+        rowNumber = event.widget.master.grid_info()["row"] - 1
+        playerID = self.widgets[rowNumber][0].get()
+        if playerID.isnumeric():
+            self.currentPlayers.remove(playerID)
             self.clearRow(rowNumber)
-            return
+            self.master.clearRow(rowNumber, self.bg_color)
 
-        self.setCodename(rowNumber,response)
-        self.master.storeCodename(response, self.bg_color, rowNumber)
-    
+    def playerExists(self, playerID):
+        for id in self.currentPlayers:
+            if playerID == id:
+                return True
+        return False
+
     # Event handler updating a codename
     def codename_label_clicked(self, event):
         rowNumber = event.widget.master.grid_info()["row"] - 1
-        playerId = self.widgets[rowNumber][0].get()
-        if playerId:
+        playerID = self.widgets[rowNumber][0].get()
+        if playerID:
             dialog = ctk.CTkInputDialog(text="New Codename:", title="Update Codename")
             newCodename = dialog.get_input()
-            self.master.handleUpdateCodename(playerId, newCodename)
+            self.master.handleUpdateCodename(playerID, newCodename)
             self.setCodename(rowNumber, newCodename)
     
     def setCodename(self, row, codename):
@@ -99,7 +118,8 @@ class TeamFrame(ctk.CTkFrame):
     def clear(self):
         for i in range(len(self.widgets)):
             self.clearRow(i)
-
+        
+        self.currentPlayers.clear()
 class PortPopup(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

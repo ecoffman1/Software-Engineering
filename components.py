@@ -84,7 +84,8 @@ class TeamFrame(ctk.CTkFrame):
         rowNumber = event.widget.master.grid_info()["row"] - 1
         playerID = self.widgets[rowNumber][0].get()
         if playerID.isnumeric():
-            self.currentPlayers.remove(playerID)
+            if playerID in self.currentPlayers:
+                self.currentPlayers.remove(playerID)
             self.clearRow(rowNumber)
             self.master.clearRow(rowNumber, self.bg_color)
 

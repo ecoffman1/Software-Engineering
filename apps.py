@@ -27,6 +27,13 @@ def center_window(window):
     y = (screen_height // 2) - (height // 2)
     window.geometry(f"{x}+{y}")
 
+def isAllSpaces(string):
+    result = True
+    for char in string:
+        if char != " ":
+            result = False
+    return result
+
 class Splash(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -188,8 +195,10 @@ class PlayerEntry(ctk.CTk):
     def clearRow(self, row, color):
         if(color == "Red"):
             self.player_list_r[row] = [None,None,None]
+            self.red.clearRow(row)
         else:
             self.player_list_g[row] = [None,None,None]
+            self.green.clearRow(row)
 
     def storeID(self,playerID,color,row):
         if(color == "Red"):
@@ -239,12 +248,9 @@ class PlayerEntry(ctk.CTk):
         dialog = ctk.CTkInputDialog(text="Codename:", title="Could not Find Codename in Database\nPlease Enter One")
         codename = dialog.get_input()
 
-        while(codename and codename == ""):
+        while(not codename or codename == "" or isAllSpaces(codename)):
             dialog = ctk.CTkInputDialog(text="Codename:", title="Codename Entered was not Valid\nPlease Enter a Valid One")
             codename = dialog.get_input()
-
-        if(not codename):
-            return None
 
         return codename
 
@@ -252,13 +258,9 @@ class PlayerEntry(ctk.CTk):
         dialog = ctk.CTkInputDialog(text="Equipment ID:", title="Please Enter Your Equipment ID")
         equipmentID = dialog.get_input()
 
-        while(equipmentID and (equipmentID == "" or not equipmentID.isnumeric())):
+        while(not equipmentID or not equipmentID.isnumeric()):
             dialog = ctk.CTkInputDialog(text="Equipment ID:", title="The ID You Entered Was Not Valid")
             equipmentID = dialog.get_input()
-        
-        if(not equipmentID):
-            self.clearRow(row, color)
-            return
         
         self.storeEquipmentID(equipmentID, color, row)
 

@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import messagebox
 import os
 import random
 import pygame
@@ -92,7 +93,6 @@ class music:
         tracks = [f for f in os.listdir(folder_path) if f.startswith('Track') and f.endswith('.mp3')]
         selected_track = random.choice(tracks)
         track_path = os.path.join(self.folder_path, selected_track)
-        #print(f'Selected track: {selected_track}')
 
         #stop any music
         pygame.mixer.music.stop()
@@ -173,8 +173,7 @@ class PlayerEntry(ctk.CTk):
         self.db = Database(self.config_path)
 
         self.withdraw()
-        
-      
+
     def splash(self):
         self.splash = Splash(self)
 
@@ -183,7 +182,6 @@ class PlayerEntry(ctk.CTk):
         self.state("normal")
         center_window(self)
 
-    
     def updatePort(self):
         port = PortPopup(self)
         values = port.get_input()
@@ -191,7 +189,6 @@ class PlayerEntry(ctk.CTk):
             return
         changeSettings(values)
 
-        
     def clearRow(self, row, color):
         if(color == "Red"):
             self.player_list_r[row] = [None,None,None]
@@ -235,8 +232,9 @@ class PlayerEntry(ctk.CTk):
     # Handles updating codenames in the database
     def handleUpdateCodename(self, playerID, newCodename):
         self.db.connect()
-        self.db.update_codename(playerID, newCodename)
+        updateSucceeded = self.db.update_codename(playerID, newCodename)
         self.db.close()
+        return updateSucceeded
 
     # handles adding a player to the database
     def handleAddPlayer(self, playerID, codename):
@@ -254,6 +252,12 @@ class PlayerEntry(ctk.CTk):
 
         return codename
 
+    def playerIDExists(self, playerID):
+        for player in self.player_list_r + self.player_list_g:
+            if playerID == player[0]:
+                return True
+        return False
+    
     def askForEquipmentID(self, color, row):
         dialog = ctk.CTkInputDialog(text="Equipment ID:", title="Please Enter Your Equipment ID")
         equipmentID = dialog.get_input()
@@ -275,9 +279,17 @@ class PlayerEntry(ctk.CTk):
         self.green.clear()
     
     def startGame(self, *args):
+        if not self.hasEnoughPlayers():
+            messagebox.showinfo("", "Not enough players to start!")
+            return
         play.start_music()
         self.main.switchPlayAction()
 
+    def hasEnoughPlayers(self):
+        redHasPlayer = any(player[0] for player in self.player_list_r)
+        greenHasPlayer = any(player[0] for player in self.player_list_g)
+        return redHasPlayer and greenHasPlayer
+    
     def random_music():
      folder_path = 'photon_tracks'
      

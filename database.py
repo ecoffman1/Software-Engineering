@@ -80,10 +80,13 @@ class Database():
                 params = (codename, playerID)
                 self.execute_query(query, params)
                 print(f"Codename for player {playerID} updated to {codename}.")
+                return True
             else:
                 print("No codename provided, unable to update.")
+                return False
         else:
             print(f"Player with ID {playerID} does not exist in the database.")
+            return False
 
 
     # Check if codename exists, if it does, return it.

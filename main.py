@@ -42,6 +42,4 @@ class Main():
 
         return playerData
 
-        
-
 Main()
